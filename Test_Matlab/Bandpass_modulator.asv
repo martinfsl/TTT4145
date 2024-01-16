@@ -1,0 +1,28 @@
+fc = 100;
+
+carrierSignal = cos(2*pi*fc*t);
+
+bandpassSignal = bpskSignal.*carrierSignal;
+
+% figure(2);
+% hold on;
+% plot(t, carrierSignal);
+% plot(t, bpskSignal);
+% plot(t, bandpassSignal);
+% hold off;
+
+Nfft = length(carrierSignal);
+f = linspace(-0.5, 0.5, Nfft+1); f(end) = [];
+
+signal_s = 10*log10(fftshift(fft(signal, Nfft)));
+signal_c = 10*log10(fftshift(fft(carrierSignal, Nfft)));
+signal_bp = 10*log10(fftshift(fft(bandpassSignal, Nfft)));
+
+% plot(f, signal_s);
+% plot(f, signal_c);
+% plot(f, signal_b);
+
+SNR = 2;
+bandpassSignalChannel = awgn(bandpassSignal, SNR, 'measured');
+
+plot(t, bandpassSignalChannel);
