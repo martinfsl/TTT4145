@@ -1,7 +1,3 @@
-% Set up parameters and signals
-sampleRate = 200e3;
-centerFreq = 2.42e9;
-
 % Set up the transmitter
 % Use the default value of 0 for FrequencyCorrection, which corresponds to 
 % the factory-calibrated condition
