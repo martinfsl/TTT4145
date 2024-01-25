@@ -1,4 +1,4 @@
-fRef1 = 100e3;
+fRef1 = -100e3;
 s1 = exp(1j*2*pi*fRef1*t);  % 20 kHz
 
 % fRef2 = 2e6;

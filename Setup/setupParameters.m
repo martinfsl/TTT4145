@@ -1,6 +1,6 @@
 % Set up parameters and signals
-sampleRate = 1e6;
-centerFreq = 2.4e9;
+sampleRate = 5e6;
+centerFreq = 1.8e9;
 numSamples = 1024*1024;
 
 numSymbols = 1000;

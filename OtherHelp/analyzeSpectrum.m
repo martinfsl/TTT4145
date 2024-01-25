@@ -1,4 +1,4 @@
-signalToAnalyze = dataModulated;
+signalToAnalyze = transmittedSignal;
 
 Nfft = length(signalToAnalyze);
 f = linspace(-0.5, 0.5, Nfft+1); f(end) = [];
