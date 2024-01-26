@@ -3,8 +3,8 @@ sampleRate = 5e6;
 centerFreq = 1.8e9;
 numSamples = 1024*1024;
 
-numSymbols = 1000;
+numBits = 1e4;
 samplesPerSymbol = 10;
-timeSize = numSymbols*samplesPerSymbol;
+timeSize = numBits*samplesPerSymbol;
 
-t = [0:numSymbols-1]/sampleRate;
+t = [0:numBits-1]/sampleRate;

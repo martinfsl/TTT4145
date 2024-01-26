@@ -10,7 +10,8 @@
 % transmitRepeat(tx, dataModulated);
 % transmitRepeat(tx, mt');
 
-dataStream = randi([0 1], numSymbols, 1);
+% dataStream = randi([0 1], numSymbols, 1);
+dataStream = ones(numSymbols, 1);
 
 qpskModulator = comm.QPSKModulator('BitInput', true);
 qpskSymbols = qpskModulator(dataStream);
@@ -18,4 +19,4 @@ qpskSymbols = qpskModulator(dataStream);
 rrcFilter = comm.RaisedCosineTransmitFilter('RolloffFactor',0.3);
 shapedSymbols = rrcFilter(qpskSymbols);
 
-
+transmitRepeat(tx, qpskSymbols);
