@@ -3,7 +3,7 @@ close all;
 run("Setup/setupParameters.m");
 
 % Transmitter
-
+rng(1);
 bitStream = randi([0 7], numBits, 1);
 M = 8;
 % bitStream = randi([0 7], numBits, 1);
@@ -22,7 +22,7 @@ txSignal = upfirdn(modulatedSignal, rrcFilter, sps);
 % Channel
 % White Gaussian
 SignalThroughChannel = awgn(txSignal, 15);
-pfo = comm.PhaseFrequencyOffset("PhaseOffset", 0, "FrequencyOffset", 0, ...
+pfo = comm.PhaseFrequencyOffset("PhaseOffset", 45, "FrequencyOffset", 0, ...
     "SampleRate", sampleRate);
 SignalThroughChannel = step(pfo, SignalThroughChannel);
 
@@ -56,19 +56,6 @@ Pb = numError/numBits;
 
 scatterplot(modulatedSignal);
 scatterplot(rxFiltered);
-
-% Nfft = length(txSignal);
-% f = linspace(-0.5, 0.5, Nfft+1); f(end) = [];
-% f = sampleRate.*f;
-% spectrumTx = 10*log10(fftshift(fft(txSignal, Nfft)));
-% spectrumRx = 10*log10(fftshift(fft(rxSignal, Nfft)));
-% 
-% figure(1);
-% hold on;
-% plot(f, spectrumTx);
-% plot(f, spectrumRx);
-% legend("Tx", "Rx");
-% hold off;
 
 % eyediagram(modulatedSignal, 6);
 % eyediagram(txSignal, 6);
