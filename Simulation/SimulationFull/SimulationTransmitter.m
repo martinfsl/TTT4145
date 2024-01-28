@@ -1,4 +1,4 @@
-function txSignal = SimulationTransmitter(sequence, M, rrcFilter, sps)
+function [txSignal, modulatedSignal] = SimulationTransmitter(sequence, M, rrcFilter, sps)
     % modulatedSignal = pskmod(sequence, M, pi/M, "gray");
     modulatedSignal = qammod(sequence, M, "gray");
     

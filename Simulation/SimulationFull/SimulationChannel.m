@@ -1,6 +1,8 @@
-function SignalThroughChannel = SimulationChannel(txSignal, sampleRate, pOffset, fOffset)
+function SignalThroughChannel = SimulationChannel(txSignal, sampleRate, ...
+    SNR, pOffset, fOffset)
+
     % Gaussian channel w/ phase and frequency offset
-    SignalThroughChannel = awgn(txSignal, 15);
+    SignalThroughChannel = awgn(txSignal, SNR);
     pfo = comm.PhaseFrequencyOffset("PhaseOffset", pOffset, "FrequencyOffset", fOffset, ...
         "SampleRate", sampleRate);
     SignalThroughChannel = step(pfo, SignalThroughChannel);
