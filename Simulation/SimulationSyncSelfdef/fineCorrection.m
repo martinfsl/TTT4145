@@ -1,23 +1,20 @@
 function fineCorrSignal = fineCorrection(...
-    rxSignal, M, sampleRate, sps)
+    rxSignal, M, sps)
 
     
     % Coefficients
     K = 1; % Detector gain
-    DampingFactor = 1;
-    NormalizedLoopBandwidth = 1;
+    DampingFactor = 0.7;
+    NormalizedLoopBandwidth = 0.8;
 
     theta = NormalizedLoopBandwidth/(M*(DampingFactor + 1/(4*DampingFactor)));
     delta = 1 + 2*DampingFactor*theta + theta*theta;
 
     PhaseRecoveryLoopBandwidth = NormalizedLoopBandwidth*sps;
     PhaseRecoveryGain = sps;
-    PhaseErrorDetectorGain = log2(M);
+    PhaseErrorDetectorGain = K;
     DigitalSynthesizerGain = -1;
     
-    % G1 = (4*theta*theta/delta)/(sps*K); % Proportional gain -> Loop filter
-    % G3 = (4*DampingFactor*theta/delta)/(sps*K); % Integrator gain -> Direct Digital Synthesizer
-
     % G1
     ProportionalGain = (4*DampingFactor*theta/delta)/...
         (PhaseErrorDetectorGain*PhaseRecoveryGain);

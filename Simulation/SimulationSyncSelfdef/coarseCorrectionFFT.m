@@ -4,37 +4,42 @@ function coarseCorrSignal = coarseCorrectionFFT(...
     rxSignalPow = rxSignal.^M;
 
     % Nfft = length(rxSignalPow);
-    Nfft = 2^(ceil(log2(length(rxSignal))));
+    freqResolution = 1;
+    Nfft = 2^(ceil(log2(length(rxSignal)/freqResolution)));
     f = linspace(-0.5, 0.5, Nfft+1)*sampleRate; f(end) = [];
-    rxSpectrum = 10*log10(abs(fftshift(fft(rxSignalPow, Nfft))));
+    rxSpectrum = abs(fft(rxSignalPow, Nfft));
 
     [~, index] = max(rxSpectrum);
-    freqOffset = f(index);
 
-    if abs(freqOffset) > 1e3
-        if freqOffset > 0
-            pfo = comm.PhaseFrequencyOffset("PhaseOffset", 0, "FrequencyOffset", -freqOffset, ...
-            "SampleRate", sampleRate);
-        else
-            pfo = comm.PhaseFrequencyOffset("PhaseOffset", 0, "FrequencyOffset", freqOffset, ...
-            "SampleRate", sampleRate);
-        end
-
-        coarseCorrSignal = step(pfo, rxSignal);
-    else
-        coarseCorrSignal = rxSignal;
+    if index > Nfft
+        index = index - Nfft;
     end
 
-    % disp(freqOffset);
+    % freqOffset = f(index);
+    freqOffset = (index-1)*(sampleRate/(Nfft*M));
+        
 
-    disp(freqOffset);
+    if freqOffset > 0
+        pfo = comm.PhaseFrequencyOffset("PhaseOffset", 0, "FrequencyOffset", -freqOffset, ...
+        "SampleRate", sampleRate);
+    else
+        pfo = comm.PhaseFrequencyOffset("PhaseOffset", 0, "FrequencyOffset", freqOffset, ...
+        "SampleRate", sampleRate);
+    end
+
+    coarseCorrSignal = step(pfo, rxSignal);
+
+    % disp(freqOffset);
+    % fprintf("%i %i %i", freqOffset, Nfft, sampleRate);
 
     % Plotting
     rxSignalSpectrum = 10*log10(fftshift(fft(rxSignal, Nfft)));
     rxCoarseSpectrum = 10*log10(fftshift(fft(coarseCorrSignal, Nfft)));
 
-    subplot(2, 1, 1);
-    plot(f, rxSignalSpectrum);
-    subplot(2, 1, 2);
-    plot(f, rxCoarseSpectrum);
+    % subplot(3, 1, 1);
+    % plot(f, rxSignalSpectrum);
+    % subplot(3, 1, 2);
+    % plot(f, rxCoarseSpectrum);
+    % subplot(3, 1, 3);
+    % plot(rxSpectrum);
 end
