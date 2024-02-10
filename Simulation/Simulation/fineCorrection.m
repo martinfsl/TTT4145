@@ -1,10 +1,26 @@
 function fineCorrSignal = fineCorrection(...
     rxSignal, M, sps)
 
+    % Works well when correction is after matched filtering
+    % K = 0.1; % Detector gain
+    % DampingFactor = 1.3;
+    % NormalizedLoopBandwidth = 1;
     
-    % Coefficients
+    % Works well with order: CFC -> Matched filtering -> FFC
+    % span = 200; sps = 50;
+    % K = 0.2; % Detector gain
+    % DampingFactor = 0.7;
+    % NormalizedLoopBandwidth = 1;
+
+    % Works well with order: CFC -> Matched filtering -> FFC
+    % span = 200; sps = 50; and span = 10; sps = 4;
+    % K = 0.5; % Detector gain
+    % DampingFactor = 0.7;
+    % NormalizedLoopBandwidth = 1;
+
+    % Tried to work when not downsampling in filtering
     K = 1; % Detector gain
-    DampingFactor = 0.7;
+    DampingFactor = 1.3;
     NormalizedLoopBandwidth = 0.8;
 
     theta = NormalizedLoopBandwidth/(M*(DampingFactor + 1/(4*DampingFactor)));
@@ -62,6 +78,8 @@ function fineCorrSignal = fineCorrection(...
     
     % scatterplot(output(end-1024:end-10)); title("");
 
+    output = circshift(output, 1);
+    output(1) = rxSignal(1)*exp(1i * Phase);
     fineCorrSignal = output;
 
 end
