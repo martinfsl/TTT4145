@@ -2,14 +2,19 @@ function fineCorrSignal = fineCorrection(...
     rxSignal, M, sps)
 
     % Works well when correction is after matched filtering
-    K = 1; % Detector gain
-    DampingFactor = 0.5;
-    NormalizedLoopBandwidth = 0.8;
+    % K = 1; % Detector gain
+    % DampingFactor = 0.5;
+    % NormalizedLoopBandwidth = 0.8;
 
     % Values for the real system:
     % K = 0.5; % Detector gain
     % DampingFactor = 0.7;
     % NormalizedLoopBandwidth = 1;
+
+    % Values for the real system, matched filtering first
+    K = 1; % Detector gain
+    DampingFactor = 0.7;
+    NormalizedLoopBandwidth = 0.8;
 
     theta = NormalizedLoopBandwidth/(M*(DampingFactor + 1/(4*DampingFactor)));
     delta = 1 + 2*DampingFactor*theta + theta*theta;
