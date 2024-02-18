@@ -8,7 +8,7 @@ function frameStart = estFrameStart(rxSignal, preamble, bitStream)
 
     i = 1;
     while i < 3
-        fprintf("%i %i \n", length(rxSignal), lags(peakIndices(i)));
+        % fprintf("%i %i \n", length(rxSignal), lags(peakIndices(i)));
         if lags(peakIndices(i)) < 0 || lags(peakIndices(i)) > length(rxSignal)-length(bitStream)
             i = i + 1;
         else
