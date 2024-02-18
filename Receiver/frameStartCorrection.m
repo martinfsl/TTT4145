@@ -1,1 +1,0 @@
-frameStart = estFrameStart(downsample(rxFiltered, sps), preambleMod);

@@ -3,11 +3,11 @@ function frameStart = estFrameStart(rxSignal, preamble, bitStream)
     [correlation, lags] = xcorr(rxSignal, preamble);
     % Find the peak in the correlation
     % [~, peakIndex] = max(abs(correlation));
-    [peakValues, peakIndices] = maxk(abs(correlation), 3);
+    [peakValues, peakIndices] = maxk(abs(correlation), length(preamble));
     % Calculate the index of the start of the frame
 
     i = 1;
-    while i < 3
+    while i < length(peakIndices)
         % fprintf("%i %i \n", length(rxSignal), lags(peakIndices(i)));
         if lags(peakIndices(i)) < 0 || lags(peakIndices(i)) > length(rxSignal)-length(bitStream)
             i = i + 1;

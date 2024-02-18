@@ -10,20 +10,21 @@ rxSignalPhaseCorr = phaseCorrection(rxSignalCoarse, preambleMod, ...
     sps, frameStart);
 
 rxSignalFine = fineCorrection(rxSignalPhaseCorr, M, sps);
-% rxSignalFine = fineCorrection(rxSignalCoarse, M, sps);
+
+frameStart = estFrameStart(downsample(rxSignalFine, sps), preambleMod, bitStream);
+rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, ...
+    sps, frameStart);
 
 symbolSync = comm.SymbolSynchronizer(...
     'SamplesPerSymbol', sps, ...
     'NormalizedLoopBandwidth', 0.01, ...
     'DampingFactor', 1, ...
     'TimingErrorDetector', 'Gardner (non-data-aided)');
-rxSynced = symbolSync(rxSignalFine);
-% rxSynced = symbolSync(rxSignalPhaseCorr);
+% rxSynced = symbolSync(rxSignalFine);
 % [rxFrameSynced, rxMessage] = frameSync(rxSynced, frameStart, ...
-    % preambleMod, length(message));
+%     preambleMod, length(message));
 
 rxDownsampled = downsample(rxSignalFine, sps);
-% rxDownsampled = downsample(rxSignalPhaseCorr, sps);
 [rxFrameSynced, rxMessage] = frameSync(rxDownsampled, frameStart, ...
     preambleMod, length(message));
 
@@ -32,15 +33,21 @@ rxFinal = rxFrameSynced;
 decodedMessage = pskdemod(rxMessage(end-length(message)+1:end), M, pi/M, "gray");
 
 error = sum(decodedMessage ~= message);
+error_Pb = error/length(message);
+
+difference = [decodedMessage, message];
 
 % scatterplot(rxSignal);
 % scatterplot(rxFiltered);
 % scatterplot(rxSignalCoarse);
 % scatterplot(rxSignalPhaseCorr);
 % scatterplot(rxSignalFine);
+% scatterplot(rxSynced);
 % scatterplot(rxFinal);
+% scatterplot(rxMessage);
 
-scatterplot(rxSignalFine);
-scatterplot(rxSynced);
-scatterplot(rxDownsampled);
-scatterplot(rxMessage);
+% scatterplot(rxSignalFine);
+% scatterplot(rxSynced);
+% scatterplot(rxDownsampled);
+% scatterplot(rxFinal);
+% scatterplot(rxMessage);
