@@ -15,14 +15,18 @@ preamble = repmat(preamble, 40, 1);
 % message = [1; 0; 1; 0; 1; 0; 1; 0; 1; 0];
 % message = repmat(message, 5, 1);
 % message = repmat(3, 20, 1);
-message = [3; 2; 1; 0];
-message = repmat(message, 2000, 1);
+% message = [3; 2; 1; 0];
+% message = repmat(message, 2000, 1);
 
 % message1 = [3; 2; 1; 0];
 % message1 = repmat(message1, 10, 1);
 % message2 = [0; 1; 2; 3];
 % message2 = repmat(message2, 10, 1);
 % message = [message2; message1];
+
+% For voice
+% message = zeros(29752, 1);
+message = zeros(141120, 1);
 
 bitStream = [preamble; message];
 
