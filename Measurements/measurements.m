@@ -1,16 +1,16 @@
 close all; clear; clc;
 
-fileName = "Data\signal-RBW-100kHz-new.csv";
+fileName = "Data\carrier-RBW-100kHz-new.csv";
 file = readmatrix(fileName); 
 
 % hard coded numbers for formatting (same file format each time)
 data = file(4:end,1:2);
-xAxis = data(144:end,2); % frequency axis (arbitrary, but uses 1.79 GHz - 1.81 GHz)
+xAxis = data(144:end,2); % frequency axis 
 yAxis = data(144:end,1); % avg VRMS power [dBm]
 
 % power calculations
 attenuator = 30.15; % cable + attenuator loss in dB
-indices = 369:436; % indices ~ 369:431 (signal) 395:412 (carrier) % when using 801 points
+indices = 396:413; % indices ~ 369:431 (signal), ~ 395:412 (carrier) % when using 801 points
 totalSignalPower = 10*log10(sum( 10.^(yAxis(indices)/10) ))
 outputSignalPower = totalSignalPower + attenuator
 
