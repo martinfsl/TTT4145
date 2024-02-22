@@ -8,7 +8,9 @@ M = 4;
 run("setupTxSignal.m");
 
 preambleMod = pskmod(preamble, M, pi/M, "gray");
+% preambleMod = pskmod(preamble, M, pi/M, "gray", "InputType", "bit");
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+% bitStreamMod = pskmod(bitStream, M, pi/M, "gray", "InputType", "bit");
 
 % Setup pulse modulation filter
 rolloff = 0.6;

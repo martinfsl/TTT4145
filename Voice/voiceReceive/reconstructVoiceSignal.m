@@ -1,6 +1,6 @@
 function voiceSignalRec = reconstructVoiceSignal(symbols, lenMessage)
     % Assuming symbols contain values 0 through 3
-    nSymbols = length(lenMessage);
+    nSymbols = lenMessage;
     bitPairs = zeros(nSymbols, 2);
     
     for i = 1:nSymbols
@@ -17,17 +17,18 @@ function voiceSignalRec = reconstructVoiceSignal(symbols, lenMessage)
     end
     
     % Flatten bitPairs to a bit vector
-    y_bits_reconstructed = uint8(reshape(bitPairs.', [], 8));
+    y_bits_reconstructed = uint8(reshape(bitPairs.', [], 1));
     
     % Assuming 8 bits per sample
     nBits = 8;
+    nLevels = 2^nBits;
     nSamples = nSymbols*2 / nBits;
     y_quantized_reconstructed = zeros(nSamples, 1);
     
     for i = 1:nSamples
         startIndex = (i-1) * nBits + 1;
         endIndex = i * nBits;
-        y_quantized_reconstructed(i) = bit2int(y_bits_reconstructed(startIndex:endIndex)', 8);
+        y_quantized_reconstructed(i) = bit2int(y_bits_reconstructed(startIndex:endIndex), 8);
     end
     
     % y_dequantized = (double(y_quantized_reconstructed) / ((nLevels/2) - 1)) - 1;
