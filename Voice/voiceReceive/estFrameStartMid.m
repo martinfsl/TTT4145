@@ -14,5 +14,5 @@ function frameStart = estFrameStart(rxSignal, preamble, bitStream, frameSize)
 
     frameStart = lags(peakIndices(i)) + 1; % Adjust for MATLAB indexing
 
-    % plot(lags, abs(correlation));
+    plot(lags, abs(correlation));
 end

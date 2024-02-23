@@ -1,1 +1,2 @@
-connectedSignal = [connectedSignal; decodedMessage];
+allDecodedMessages = [allDecodedMessages, decodedMessage];
+allReceivedHeaders = [allReceivedHeaders, mode(decodedHeader)];

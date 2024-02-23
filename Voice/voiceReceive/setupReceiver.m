@@ -33,11 +33,16 @@ preambleMod = pskmod(preamble, M, pi/M, "gray");
 frameSize = 3719;
 message = zeros(frameSize, 1);
 
+header = zeros(3, 1);
+
+allDecodedMessages = [];
+allReceivedHeaders = [];
+
 % message = [3; 2; 1; 0;];
 % message = repmat(message, 25, 1);
 % txMessage = [message; message];
 
-bitStream = [message; preamble; message];
+bitStream = [message; preamble; header; message];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 
