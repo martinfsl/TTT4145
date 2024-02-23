@@ -1,4 +1,4 @@
-voiceRec = reconstructVoiceSignal(message, length(message));
-% voiceRec = reconstructVoiceSignalBits(message, length(message));
+% voiceRec = reconstructVoiceSignal(decodedMessage, length(decodedMessage));
+voiceRec = reconstructVoiceSignal(connectedSignal, length(connectedSignal));
 
-% sound(voiceRec, Fs);
+sound(voiceRec, 16000);
