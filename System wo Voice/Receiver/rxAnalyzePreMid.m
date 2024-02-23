@@ -17,7 +17,7 @@ frameStart = estFrameStartMid(downsample(rxSignalFine, sps), preambleMod, ...
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, ...
     sps, frameStart);
 
-rxDownsampled = downsample(rxSignalPhaseCorr, sps);
+rxDownsampled = downsample(rxSignalFine, sps);
 [rxFrameSynced, rxMessage, rxPreamble] = frameSyncMid(rxDownsampled, frameStart, ...
     preambleMod, frameSize);
 
@@ -26,4 +26,9 @@ rxFinal = rxFrameSynced;
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 
-scatterplot(rxDownsampled);
+diffPreamble = [preamble, decodedPreamble];
+diffMessage = [txMessage, decodedMessage];
+
+error = sum(decodedMessage ~= txMessage) + ...
+    sum(decodedPreamble ~= preamble);
+error_Pb = error/length(bitStream);

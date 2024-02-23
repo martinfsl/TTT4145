@@ -12,11 +12,6 @@ M = 4;
 % message = [3; 2; 1; 0];
 % message = repmat(message, 50, 1);
 
-% For voice
-% message = zeros(29752, 1);
-% message = zeros(29752/2, 1);
-% message = zeros(141120, 1);
-
 % bitStream = [preamble; message;];
 % bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 % preambleMod = pskmod(preamble, M, pi/M, "gray");
@@ -24,17 +19,16 @@ M = 4;
 %%% -----------------------------------------------------
 % Preamble in the middle
 preamble    = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
-% preamble    = repmat(preamble, 10, 1);
-preamble    = repmat(preamble, 400, 1);
+preamble    = repmat(preamble, 10, 1);
 % preamble    = repmat(preamble, 40, 1);
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
-frameSize = 14876;
-message = zeros(frameSize, 1);
+frameSize = 4*20;
+% message = zeros(frameSize, 1);
 
-% message = [3; 2; 1; 0;];
-% message = repmat(message, 25, 1);
-% txMessage = [message; message];
+message = [3; 2; 1; 0;];
+message = repmat(message, 20, 1);
+txMessage = [message; message];
 
 bitStream = [message; preamble; message];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
