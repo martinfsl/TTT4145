@@ -22,4 +22,21 @@ messagePartition = message(1 + i*messagePartitionSize:(i+1)*messagePartitionSize
 message1 = messagePartition(1:frameSize);
 message2 = messagePartition(frameSize + 1:end);
 
-bitStream = [message1; preamble; message2];
+header = [i; i; i;];
+% header = [5; 5; 5;];
+
+bitStream = [message1; preamble; header; message2];
+
+M = 4;
+
+preambleMod = pskmod(preamble, M, pi/M, "gray");
+bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+% Setup pulse modulation filter
+rolloff = 0.6;
+sps = 4;
+span = 20;
+rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
+
+% Setup transmit-signal
+txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);

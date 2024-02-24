@@ -1,18 +1,9 @@
-close all;
-
-rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
-rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
-
-rxSignalCoarse = coarseCorrectionFFT(rxFiltered, M, sampleRate);
-
-frameStart = estFrameStartMid(downsample(rxSignalCoarse, sps), preambleMod, ...
-    bitStream, frameSize);
 rxSignalPhaseCorr = phaseCorrection(rxSignalCoarse, preambleMod, ...
     sps, frameStart);
 
 rxSignalFine = fineCorrection(rxSignalPhaseCorr, M, sps);
 
-frameStart = estFrameStartMid(downsample(rxSignalFine, sps), preambleMod, ...
+[frameStart, corrVal] = estFrameStartMid(downsample(rxSignalFine, sps), preambleMod, ...
     bitStream, frameSize);
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, ...
     sps, frameStart);
@@ -35,4 +26,7 @@ decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
-scatterplot(rxMessage);
+scatterplot(rxDownsampled);
+drawnow;
+% scatterplot(rxDownsampledv2);
+% scatterplot(rxMessage);

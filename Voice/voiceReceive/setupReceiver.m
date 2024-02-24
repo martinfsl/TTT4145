@@ -35,6 +35,7 @@ message = zeros(frameSize, 1);
 
 header = zeros(3, 1);
 
+allRxMessages = [];
 allDecodedMessages = [];
 allReceivedHeaders = [];
 
@@ -54,7 +55,8 @@ rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup the receiver
 % numSamples = 3000;
-numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1));
+% numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1));
+numSamples = round(4*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 rx = sdrrx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
            'BasebandSampleRate', sampleRate, 'SamplesPerFrame', numSamples, ...
            'OutputDataType', 'double', 'ShowAdvancedProperties', true);

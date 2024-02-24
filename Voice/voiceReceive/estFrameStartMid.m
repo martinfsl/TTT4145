@@ -1,4 +1,4 @@
-function frameStart = estFrameStart(rxSignal, preamble, bitStream, frameSize)
+function [frameStart, corrVal] = estFrameStartMid(rxSignal, preamble, bitStream, frameSize)
 
     [correlation, lags] = xcorr(rxSignal, preamble);
     [peakValues, peakIndices] = maxk(abs(correlation), length(preamble));
@@ -13,6 +13,8 @@ function frameStart = estFrameStart(rxSignal, preamble, bitStream, frameSize)
     end
 
     frameStart = lags(peakIndices(i)) + 1; % Adjust for MATLAB indexing
+    corrVal = peakValues(i);
 
     plot(lags, abs(correlation));
+    drawnow;
 end

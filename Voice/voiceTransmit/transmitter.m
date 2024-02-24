@@ -2,3 +2,4 @@
 % run setupTransmitter.m;
 
 transmitRepeat(tx, txSignal);
+% tx(txSignal);
