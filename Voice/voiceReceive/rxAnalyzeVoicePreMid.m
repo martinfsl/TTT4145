@@ -15,7 +15,8 @@ symbolSync = comm.SymbolSynchronizer(...
     'TimingErrorDetector','Early-Late (non-data-aided)');
 rxDownsampled = symbolSync(rxSignalPhaseCorr);
 
-% rxDownsampledv2 = downsample(rxSignalPhaseCorr, sps);
+rxDownsampledv2 = downsample(rxSignalPhaseCorr, sps);
+% rxDownsampled = rxDownsampledv2;
 
 [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
     frameSyncMid(rxDownsampled, frameStart, preambleMod, frameSize, header);
