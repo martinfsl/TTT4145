@@ -35,6 +35,7 @@ message = zeros(frameSize, 1);
 
 header = zeros(3, 1);
 
+allRxSignals = [];
 allRxMessages = [];
 allDecodedMessages = [];
 allReceivedHeaders = [];

@@ -1,5 +1,5 @@
 rxSignal = capture(rx, numSamples);
-% rxSignal = allRxSignals(:, 2);
+% rxSignal = allRxSignals(:, 3);
 
 rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
 rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
@@ -25,7 +25,7 @@ symbolSync = comm.SymbolSynchronizer(...
     'TimingErrorDetector','Early-Late (non-data-aided)');
 rxDownsampled = symbolSync(rxSignalPhaseCorr);
 
-rxDownsampledv2 = downsample(rxSignalPhaseCorr, sps);
+% rxDownsampledv2 = downsample(rxSignalPhaseCorr, sps);
 % rxDownsampled = rxDownsampledv2;
 
 [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
@@ -43,5 +43,5 @@ decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 % scatterplot(rxSignalFine);
 % scatterplot(rxSignalPhaseCorr);
 scatterplot(rxDownsampled);
-scatterplot(rxDownsampledv2);
+% scatterplot(rxDownsampledv2);
 % scatterplot(rxMessage);
