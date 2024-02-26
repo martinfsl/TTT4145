@@ -44,13 +44,12 @@ allReceivedHeaders = [];
 % message = repmat(message, 25, 1);
 % txMessage = [message; message];
 
-% bitStream = [message; preamble; header; message];
-
 message1 = repmat([3; 2; 1; 0;], 20, 1);
 message2 = repmat([0; 1; 2; 3;], 20, 1);
 bitStream = [message1; preamble; header; message2];
 frameSize = 80;
 
+% bitStream = [message; preamble; header; message];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 

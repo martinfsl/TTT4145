@@ -2,14 +2,13 @@ function fineCorrSignal = fineCorrection(...
     rxSignal, M, sps)
 
     % Values for the real system, matched filtering first
-    % When symbol sync is not implemented
     % K = 1; % Detector gain
     % DampingFactor = 0.7;
     % NormalizedLoopBandwidth = 0.8;
 
     K = 1; % Detector gain
     DampingFactor = 0.7;
-    NormalizedLoopBandwidth = 0.2;
+    NormalizedLoopBandwidth = 0.05;
 
     theta = NormalizedLoopBandwidth/(M*(DampingFactor + 1/(4*DampingFactor)));
     delta = 1 + 2*DampingFactor*theta + theta*theta;
