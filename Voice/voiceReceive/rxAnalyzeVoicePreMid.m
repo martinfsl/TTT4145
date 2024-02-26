@@ -27,7 +27,8 @@ decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
-scatterplot(rxDownsampled);
-drawnow;
+% scatterplot(rxDownsampled);
+% drawnow;
 % scatterplot(rxDownsampledv2);
-% scatterplot(rxMessage);
+scatterplot(rxMessage);
+drawnow;

@@ -38,3 +38,4 @@ decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
 scatterplot(rxSignalFine);
+scatterplot(rxMessage);

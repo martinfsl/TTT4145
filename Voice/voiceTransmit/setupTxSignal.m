@@ -8,7 +8,8 @@ messagePartitionSize = length(message)/4;
 frameSize = messagePartitionSize/2;
 
 preamble = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
-preamble = repmat(preamble, 50, 1);
+% preamble = repmat(preamble, 50, 1);
+preamble = repmat(preamble, 10, 1);
 
 % messagePutTogether = [];
 % for i = 0:3
@@ -25,7 +26,12 @@ message2 = messagePartition(frameSize + 1:end);
 header = [i; i; i;];
 % header = [5; 5; 5;];
 
-bitStream = [message1; preamble; header; message2];
+% bitStream = [message1; preamble; header; message2];
+
+message1 = repmat([3; 2; 1; 0;], 20, 1);
+message2 = repmat([0; 1; 2; 3;], 20, 1);
+bitStream = [message1; preamble; header; message2;];
+frameSize = 80;
 
 M = 4;
 
@@ -34,8 +40,8 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 
 % Setup pulse modulation filter
 rolloff = 0.6;
-sps = 4;
-span = 20;
+sps = 20;
+span = 200;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup transmit-signal

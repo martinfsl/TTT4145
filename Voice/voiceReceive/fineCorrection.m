@@ -7,6 +7,7 @@ function fineCorrSignal = fineCorrection(...
     % DampingFactor = 0.7;
     % NormalizedLoopBandwidth = 0.8;
 
+    % Works OKAY after symbol sync is implemented
     K = 1; % Detector gain
     DampingFactor = 0.7;
     NormalizedLoopBandwidth = 0.2;

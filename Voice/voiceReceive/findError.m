@@ -5,6 +5,8 @@ cd(TransmitPath);
 [trueMessage, ~] = setupVoiceFromFile("stry(1).wav");
 cd(Current_Dir);
 
+trueMessage = trueMessage(1:29500);
+
 error = sum(voiceMessage ~= trueMessage);
 error_Pb = error/length(voiceMessage);
 
