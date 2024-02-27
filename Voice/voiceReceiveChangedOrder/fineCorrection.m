@@ -6,8 +6,17 @@ function fineCorrSignal = fineCorrection(...
     % DampingFactor = 0.7;
     % NormalizedLoopBandwidth = 0.8;
 
+    % K = 1; % Detector gain
+    % DampingFactor = 0.7;
+    % NormalizedLoopBandwidth = 0.05;
+    
+    % Works okay with symbol synchronizer and interleaving
+    % K = 1; % Detector gain
+    % DampingFactor = 1.3;
+    % NormalizedLoopBandwidth = 0.05;
+
     K = 1; % Detector gain
-    DampingFactor = 0.7;
+    DampingFactor = 1.3;
     NormalizedLoopBandwidth = 0.05;
 
     theta = NormalizedLoopBandwidth/(M*(DampingFactor + 1/(4*DampingFactor)));

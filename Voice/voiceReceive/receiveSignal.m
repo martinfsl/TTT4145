@@ -18,6 +18,7 @@ while (length(allReceivedHeaders) < 10)
 
         if (~ismember(h, allReceivedHeaders) && ...
              ismember(h, possibleHeaders))
+            
             % run("connectReceivedSignals.m");
             allRxSignals = [allRxSignals, rxSignal];
             allRxMessages = [allRxMessages, rxMessage];

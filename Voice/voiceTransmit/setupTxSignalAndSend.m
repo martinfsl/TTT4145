@@ -3,6 +3,10 @@
 
 message = message(1:29500);
 
+rng(1);
+permVector = randperm(length(message));
+message = intrlv(message, permVector);
+
 % message1 = message(1:length(message)/2);
 % message2 = message(length(message)/2 + 1:end);
 
@@ -42,17 +46,17 @@ for i = 0:9
     
     % Setup pulse modulation filter
     rolloff = 0.6;
-    sps = 10;
+    sps = 20;
     % span = 200;
-    span = 50;
+    span = 200;
     rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
     
     % Setup transmit-signal
     txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
 
     fprintf("%s %i \n", "Transmission: ", i+1);
-    % transmitRepeat(tx, txSignal);
-    tx(txSignal);
+    transmitRepeat(tx, txSignal);
+    % tx(txSignal);
 
     % 5 sec delay between each new transmission
     pause(4.0);

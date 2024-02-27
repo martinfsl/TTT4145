@@ -26,10 +26,14 @@ fineFreqComp = comm.CarrierSynchronizer( ...
     'NormalizedLoopBandwidth',0.01, ...
     'SamplesPerSymbol',sps, ...
     'Modulation','QPSK');
-rxSignalFine = fineFreqComp(rxTimingSync);
+rxSignalFine = fineFreqComp(rxSignalPhaseCorr);
+
+[frameStart, corrVal] = estFrameStartMid(rxSignalFine, ...
+                        preambleMod, bitStream, frameSize);
+rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart);
 
 [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
-    frameSyncMid(rxSignalFine, frameStart, preambleMod, frameSize, header);
+    frameSyncMid(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
 
 rxFinal = rxFrameSynced;
 
