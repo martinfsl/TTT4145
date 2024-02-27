@@ -1,8 +1,13 @@
 corrVal = 0;
 
-while (length(allReceivedHeaders) < 10)
-    rxSignal = capture(rx, numSamples);
-    
+% while (length(allReceivedHeaders) < 10)
+%     rxSignal = capture(rx, numSamples);
+
+val = 0;
+while(val < 10)
+    rxSignal = temp(:, val+1);
+    val = val + 1;
+
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
     rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
     
