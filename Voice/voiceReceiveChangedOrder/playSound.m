@@ -8,6 +8,6 @@ end
 
 % voiceRec = reconstructVoiceSignal(decodedMessage, length(decodedMessage));
 % voiceRec = reconstructVoiceSignal(voiceMessage, length(voiceMessage));
-voiceRec = reconstructVoiceSignal(voiceMessageDeinterleaved, length(voiceMessage));
+% voiceRec = reconstructVoiceSignal(voiceMessageDeinterleaved, length(voiceMessage));
 
-sound(voiceRec, 16000);
+% sound(voiceRec, 16000);

@@ -1,5 +1,6 @@
-rxSignal = capture(rx, numSamples);
+% rxSignal = capture(rx, numSamples);
 % rxSignal = allRxSignals(:, 3);
+rxSignal = rxSignalsAll(:, 8);
 
 rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
 rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
@@ -40,7 +41,9 @@ decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 % scatterplot(rxSignal);
 % scatterplot(rxFiltered);
 % scatterplot(rxSignalCoarse);
-scatterplot(rxTimingSync);
-scatterplot(rxSignalFine);
+% scatterplot(rxTimingSync);
+% scatterplot(rxSignalFine);
 % scatterplot(rxSignalPhaseCorr);
-% scatterplot(rxMessage);
+scatterplot(rxMessage);
+
+eyediagram(rxMessage, 2);
