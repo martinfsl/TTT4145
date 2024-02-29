@@ -2,6 +2,7 @@ function [frameStart, corrVal] = estFrameStartMid(rxSignal, preamble, bitStream,
 
     [correlation, lags] = xcorr(rxSignal, preamble);
     [peakValues, peakIndices] = maxk(abs(correlation), length(preamble));
+    % [peakValues, peakIndices] = maxk(abs(correlation), 4);
 
     i = 1;
     while i < length(peakIndices)
@@ -17,4 +18,5 @@ function [frameStart, corrVal] = estFrameStartMid(rxSignal, preamble, bitStream,
 
     % plot(lags, abs(correlation));
     % drawnow;
+    plot(lags, abs(correlation));
 end

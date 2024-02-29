@@ -41,7 +41,7 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 
 % Setup pulse modulation filter
-rolloff = 0.6;
+rolloff = 0.95;
 sps = 20;
 span = 200;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
