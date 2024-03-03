@@ -18,5 +18,5 @@ function [frameStart, corrVal] = estFrameStartMid(rxSignal, preamble, bitStream,
 
     % plot(lags, abs(correlation));
     % drawnow;
-    plot(lags, abs(correlation));
+    % plot(lags, abs(correlation));
 end

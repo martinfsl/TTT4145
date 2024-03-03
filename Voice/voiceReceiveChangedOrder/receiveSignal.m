@@ -1,6 +1,6 @@
 corrVal = 0;
 
-while (length(allReceivedHeaders) < 10)
+while (length(allReceivedHeaders) < partitions)
     rxSignal = capture(rx, numSamples);
 
 % val = 0;

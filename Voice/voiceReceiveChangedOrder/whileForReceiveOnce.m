@@ -1,3 +1,5 @@
+load ../Measurements_0103/ninthSweep.mat
+
 i = 0;
 while (i < size(interleaving_fewErrors.allRxSignals, 2))
     rxSignal = interleaving_fewErrors.allRxSignals(:, i+1);

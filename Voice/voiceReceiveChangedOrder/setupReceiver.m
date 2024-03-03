@@ -17,9 +17,12 @@ preamble    = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
 preamble    = repmat(preamble, 50, 1);
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
-% frameSize = 14876;
-% frameSize = 3719;
-frameSize = 1475;
+partitions = 5;
+frameSize = 2950;
+
+% partitions = 10;
+% frameSize = 1475;
+
 message = zeros(frameSize, 1);
 
 possibleHeaders = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -41,18 +44,19 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 
 % Setup pulse modulation filter
-rolloff = 0.95;
-sps = 20;
+rolloff = 0.8;
+sps = 10;
 span = 200;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup the receiver
 % numSamples = 3000;
 % numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1));
-numSamples = round(4*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
-rx = sdrrx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
-           'BasebandSampleRate', sampleRate, 'SamplesPerFrame', numSamples, ...
-           'OutputDataType', 'double', 'ShowAdvancedProperties', true);
+numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 
-% Use the info method to show the actual values of various hardware-related properties
-rxRadioInfo = info(rx)
+% rx = sdrrx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
+%            'BasebandSampleRate', sampleRate, 'SamplesPerFrame', numSamples, ...
+%            'OutputDataType', 'double', 'ShowAdvancedProperties', true);
+% 
+% % Use the info method to show the actual values of various hardware-related properties
+% rxRadioInfo = info(rx)
