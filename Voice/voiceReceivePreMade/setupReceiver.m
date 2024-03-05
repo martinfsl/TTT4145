@@ -2,7 +2,7 @@
 % sampleRate = 5e6;
 sampleRate = 1e6;
 % centerFreq = 1.8e9;
-centerFreq = 1.805e9;
+centerFreq = 1.804e9;
 
 M = 4;
 
@@ -13,13 +13,20 @@ M = 4;
 %%% -----------------------------------------------------
 % Preamble in the middle
 preamble    = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
-% preamble    = repmat(preamble, 10, 1);
-preamble    = repmat(preamble, 50, 1);
-% preamble    = repmat(preamble, 40, 1);
+preamble    = repmat(preamble, 40, 1);
+% preamble    = repmat(preamble, 50, 1);
+% preamble    = repmat(preamble, 5, 1);
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
-% frameSize = 14876;
+% partitions = 5;
+% frameSize = 2950;
+
+partitions = 10;
 frameSize = 1475;
+
+% partitions = 50;
+% frameSize = 295;
+
 message = zeros(frameSize, 1);
 
 possibleHeaders = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -41,18 +48,19 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 
 % Setup pulse modulation filter
-rolloff = 0.6;
+rolloff = 0.90;
 sps = 20;
-span = 200;
+span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup the receiver
 % numSamples = 3000;
-% numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1));
-numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1));
+% numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+
 rx = sdrrx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
            'BasebandSampleRate', sampleRate, 'SamplesPerFrame', numSamples, ...
            'OutputDataType', 'double', 'ShowAdvancedProperties', true);
-       
+
 % Use the info method to show the actual values of various hardware-related properties
 rxRadioInfo = info(rx)

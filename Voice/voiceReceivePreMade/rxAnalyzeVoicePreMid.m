@@ -1,29 +1,28 @@
-rxSignalPhaseCorr = phaseCorrection(rxTimingSync, preambleMod, frameStart);
+% Timing Synchronization
+rxTimingSync = symbolSync(rxSignalCoarse);
 
-fineFreqComp = comm.CarrierSynchronizer( ...
-    'DampingFactor',0.7, ...
-    'NormalizedLoopBandwidth',0.01, ...
-    'SamplesPerSymbol',sps, ...
-    'Modulation','QPSK');
-rxSignalFine = fineFreqComp(rxSignalPhaseCorr);
+% FFC
+rxSignalFine = fineFreqComp(rxTimingSync);
 
-[frameStart, corrVal] = estFrameStartMid(rxSignalFine, preambleMod, ...
-    bitStream, frameSize);
-rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart);
+cZero = zeros(frameSize, 1) + 1j*zeros(frameSize, 1);
+rxSignalFinePadded = [cZero; rxSignalFine; cZero];
 
-[frameStart, corrVal] = estFrameStartMid(rxSignalPhaseCorr, ...
+% Phase Correction
+[frameStart, corrVal] = estFrameStartMid(rxSignalFinePadded, ...
                         preambleMod, bitStream, frameSize);
-rxSignalPhaseCorr = phaseCorrection(rxSignalPhaseCorr, preambleMod, frameStart);
+rxSignalPhaseCorr = phaseCorrection(rxSignalFinePadded, preambleMod, frameStart);
 
+% Equalization
+% [rxEqualized, err] = eq(rxSignalPhaseCorr);
+% [frameStart, ~] = estFrameStartMid(rxEqualized, ...
+%                         preambleMod, bitStream, frameSize);
+% [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
+%     frameSyncMid(rxEqualized, frameStart, preambleMod, frameSize, header);
+
+% Without equalization
 [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
     frameSyncMid(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
-
-rxFinal = rxFrameSynced;
 
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
-
-% scatterplot(rxDownsampledv2);
-scatterplot(rxMessage);
-drawnow;

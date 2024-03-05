@@ -1,28 +1,29 @@
 corrVal = 0;
 
-while (length(allReceivedHeaders) < 10)
+while (length(allReceivedHeaders) < partitions)
+
+% val = 0;
+% while(val < 1)
+%     % rxSignal = temp(:, val+1);
+%     val = val + 1;
+
+    tic
+    % Sample signal
     rxSignal = capture(rx, numSamples);
     
+    % rxSignal = [zeros(frameSize, 1); rxSignal; zeros(frameSize, 1)];
+
+    % Matched filtering
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
     rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
     
-    coarseFreqComp = comm.CoarseFrequencyCompensator( ...
-        Modulation="qpsk", ...
-        SampleRate=sampleRate, ...
-        FrequencyResolution=1);
+    % CFC
     rxSignalCoarse = coarseFreqComp(rxFiltered);
-    
-    symbolSync = comm.SymbolSynchronizer(...
-        'SamplesPerSymbol',sps, ...
-        'NormalizedLoopBandwidth',0.01, ...
-        'DampingFactor',1, ...
-        'TimingErrorDetector','Early-Late (non-data-aided)');
-    rxTimingSync = symbolSync(rxSignalCoarse);
 
-    [frameStart, corrVal] = estFrameStartMid(rxTimingSync, ...
+    [~, corrVal] = estFrameStartMid(rxSignalCoarse, ...
                             preambleMod, bitStream, frameSize);
-    
-    if (corrVal > 100)
+
+    if (corrVal > 10)
         run("rxAnalyzeVoicePreMid.m");
 
         h = 4*mode(decodedHeader(1:3)) + 1*mode(decodedHeader(4:6));
@@ -34,6 +35,19 @@ while (length(allReceivedHeaders) < 10)
             allRxMessages = [allRxMessages, rxMessage];
             allDecodedMessages = [allDecodedMessages, decodedMessage];
             allReceivedHeaders = [allReceivedHeaders; h];
+
+            scatterplot(rxMessage);
+            drawnow;
+        
+            eyediagram(rxMessage, 2);
+            drawnow;
         end
+
+        % scatterplot(rxMessage);
+        % drawnow;
+
+        % eyediagram(rxMessage, 2);
+        % drawnow;
     end
+    toc
 end
