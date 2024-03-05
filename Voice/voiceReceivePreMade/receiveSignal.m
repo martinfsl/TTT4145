@@ -36,15 +36,15 @@ while (length(allReceivedHeaders) < partitions)
             allDecodedMessages = [allDecodedMessages, decodedMessage];
             allReceivedHeaders = [allReceivedHeaders; h];
 
-            scatterplot(rxMessage);
-            drawnow;
-        
-            eyediagram(rxMessage, 2);
-            drawnow;
+            % scatterplot(rxMessage);
+            % drawnow;
+            % 
+            % eyediagram(rxMessage, 2);
+            % drawnow;
         end
 
-        % scatterplot(rxMessage);
-        % drawnow;
+        scatterplot(rxMessage);
+        drawnow;
 
         % eyediagram(rxMessage, 2);
         % drawnow;

@@ -1,16 +1,13 @@
-% Timing Synchronization
-rxTimingSync = symbolSync(rxSignalCoarse);
-
 % FFC
-rxSignalFine = fineFreqComp(rxTimingSync);
+rxSignalFine = fineFreqComp(rxSignalCoarse);
 
-cZero = zeros(frameSize, 1) + 1j*zeros(frameSize, 1);
-rxSignalFinePadded = [cZero; rxSignalFine; cZero];
+% Timing Synchronization
+rxTimingSync = symbolSync(rxSignalFine);
 
 % Phase Correction
-[frameStart, corrVal] = estFrameStartMid(rxSignalFinePadded, ...
+[frameStart, corrVal] = estFrameStartMid_org(rxTimingSync, ...
                         preambleMod, bitStream, frameSize);
-rxSignalPhaseCorr = phaseCorrection(rxSignalFinePadded, preambleMod, frameStart);
+rxSignalPhaseCorr = phaseCorrection(rxTimingSync, preambleMod, frameStart);
 
 % Equalization
 % [rxEqualized, err] = eq(rxSignalPhaseCorr);
