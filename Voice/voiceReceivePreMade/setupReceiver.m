@@ -18,11 +18,17 @@ preamble    = repmat(preamble, 50, 1);
 % preamble    = repmat(preamble, 5, 1);
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
-% partitions = 5;
-% frameSize = 2950;
+% Setup pulse modulation filter
+rolloff = 0.50;
+sps = 6;
+span = 15;
+rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-partitions = 10;
-frameSize = 1475;
+partitions = 5;
+frameSize = 2950;
+
+% partitions = 10;
+% frameSize = 1475;
 
 % partitions = 50;
 % frameSize = 295;
@@ -46,12 +52,6 @@ allReceivedHeaders = [];
 bitStream = [message; preamble; header; message];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
-
-% Setup pulse modulation filter
-rolloff = 0.90;
-sps = 20;
-span = 40;
-rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup the receiver
 % numSamples = 3000;

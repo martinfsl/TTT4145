@@ -20,11 +20,27 @@ while (length(allReceivedHeaders) < partitions)
     % CFC
     rxSignalCoarse = coarseFreqComp(rxFiltered);
 
-    [~, corrVal] = estFrameStartMid(rxSignalCoarse, ...
+    % FFC
+    rxSignalFine = fineFreqComp(rxSignalCoarse);
+    
+    % Timing Synchronization
+    rxTimingSync = symbolSync(rxSignalFine);
+    
+    % Phase Correction
+    [frameStart, corrVal] = estFrameStartMid_org(rxTimingSync, ...
                             preambleMod, bitStream, frameSize);
 
-    if (corrVal > 10)
-        run("rxAnalyzeVoicePreMid.m");
+    if (corrVal > 200)
+
+        rxSignalPhaseCorr = phaseCorrection(rxTimingSync, preambleMod, frameStart);
+
+        % Without equalization
+        [rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
+            frameSyncMid(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
+        
+        decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
+        decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
+        decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
         h = 4*mode(decodedHeader(1:3)) + 1*mode(decodedHeader(4:6));
         
@@ -36,15 +52,17 @@ while (length(allReceivedHeaders) < partitions)
             allDecodedMessages = [allDecodedMessages, decodedMessage];
             allReceivedHeaders = [allReceivedHeaders; h];
 
+            disp("Found message");
+
             % scatterplot(rxMessage);
             % drawnow;
-            % 
+
             % eyediagram(rxMessage, 2);
             % drawnow;
         end
 
-        scatterplot(rxMessage);
-        drawnow;
+        % scatterplot(rxMessage);
+        % drawnow;
 
         % eyediagram(rxMessage, 2);
         % drawnow;

@@ -10,10 +10,13 @@ message = intrlv(message, permVector);
 % message1 = message(1:length(message)/2);
 % message2 = message(length(message)/2 + 1:end);
 
-messagePartitionSize = length(message)/10;
+partitions = 10;
+
+messagePartitionSize = length(message)/partitions;
 frameSize = messagePartitionSize/2;
 
 preamble = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
+% preamble = repmat(preamble, 50, 1);
 preamble = repmat(preamble, 50, 1);
 
 M = 4;
@@ -31,12 +34,12 @@ headers = [[repmat(0, 3, 1); repmat(0, 3, 1)], ...
            [repmat(2, 3, 1); repmat(1, 3, 1)]];
 
 % Setup pulse modulation filter
-rolloff = 0.95;
+rolloff = 0.9;
 sps = 20;
-span = 200;
+span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-for i = 0:9
+for i = 0:(partitions-1)
     % i = 3; % i = [0, 1, 2, 3]
     messagePartition = message(1 + i*messagePartitionSize:(i+1)*messagePartitionSize);
     
@@ -56,9 +59,9 @@ for i = 0:9
     txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
 
     fprintf("%s %i \n", "Transmission: ", i+1);
-    % transmitRepeat(tx, txSignal);
-    tx(txSignal);
+    transmitRepeat(tx, txSignal);
+    % tx(txSignal);
 
-    % 5 sec delay between each new transmission
-    pause(4.0);
+    % sec delay between each new transmission
+    pause(2);
 end

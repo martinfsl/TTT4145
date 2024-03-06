@@ -6,12 +6,15 @@ message = message(1:29500);
 % message1 = message(1:length(message)/2);
 % message2 = message(length(message)/2 + 1:end);
 
-messagePartitionSize = length(message)/10;
+partitions = 10;
+
+messagePartitionSize = length(message)/partitions;
 frameSize = messagePartitionSize/2;
 
 preamble = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
 preamble = repmat(preamble, 50, 1);
-% preamble = repmat(preamble, 10, 1);
+% preamble = repmat(preamble, 40, 1);
+% preamble = repmat(preamble, 5, 1);
 
 headers = [[repmat(0, 3, 1); repmat(0, 3, 1)], ...
            [repmat(0, 3, 1); repmat(1, 3, 1)], ...
@@ -50,9 +53,9 @@ preambleMod = pskmod(preamble, M, pi/M, "gray");
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 
 % Setup pulse modulation filter
-rolloff = 0.95;
+rolloff = 0.90;
 sps = 20;
-span = 200;
+span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % Setup transmit-signal
