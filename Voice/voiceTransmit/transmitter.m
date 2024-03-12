@@ -1,21 +1,40 @@
-% Run setupTransmitter before running this script
-% run setupTransmitter.m;
-% run setupTxSignal.m
-% transmitRepeat(tx, txSignal);
-% tx(txSignal);
-
-run setupTxSignal.m
-
 release(tx);
 
-rng(100);
-junk = randi([0 M-1], length(bitStream), 1);
-junkMod = pskmod(junk, M, pi/M, "gray");
+%%% ---------------------------------------------------
+% Read voice message
 
-% transmitRepeat(tx, upfirdn(junkMod, rrcFilter, sps, 1));
-% pause(5);
+% If you want symbols (0, 3)
+[voiceMessage, fs] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
+
+% If you want bits
+% [voiceMessageBits, fs] = setupVoiceFromFileBits("VoiceFiles/stry(1).wav");
+% voiceMessageBitsMod = pskmod(voiceMessageBits, M, pi/M, "gray", InputType = 'bit');
+
+%%% ---------------------------------------------------
+
+%%% ---------------------------------------------------
+% Partition the voice signal
+
+partitions = 29;
+voiceMessageCut = voiceMessage(1:29000);
+
+messages = reshape(voiceMessageCut, [1000, 29]);
+
+%%% ---------------------------------------------------
+
+%%% ---------------------------------------------------
+% Setup txSignal
+
+i = 29;
+
+message = messages(:, i);
+header = headers(:, i);
+
+bitStream = [preamble; header; message];
+bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
+
 transmitRepeat(tx, txSignal);
-% pause(0.15);
-% transmitRepeat(tx, upfirdn(junkMod, rrcFilter, sps, 1));
-% pause(1);
-% release(tx);
+
+%%% ---------------------------------------------------
