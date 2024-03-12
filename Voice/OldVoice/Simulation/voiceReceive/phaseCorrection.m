@@ -1,6 +1,6 @@
 function phaseCorr = phaseCorrection(rxSignal, preamble, frameStartIndex, prevRxSignal)
 
-    if frameStartIndex <= 0
+    if frameStartIndex < 0
         receivedPreamble = prevRxSignal(end+frameStartIndex+1:end);
         receivedPreamble = [receivedPreamble; ...
                             rxSignal(1:length(preamble)+frameStartIndex)];
@@ -16,5 +16,4 @@ function phaseCorr = phaseCorrection(rxSignal, preamble, frameStartIndex, prevRx
 
     phaseCorr = rxSignal * exp(-1i * phaseDiff);
 
-    % scatterplot(receivedPreamble);
 end

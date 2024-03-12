@@ -1,7 +1,6 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
 sampleRate = 1e6;
-% sampleRate = 500e3;
 % centerFreq = 1.8e9;
 centerFreq = 1.804e9;
 
@@ -52,5 +51,11 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 % numSamples = 3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)) + 1;
 numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)))+1;
 
-run setupPluto.m
+rx = sdrrx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
+           'BasebandSampleRate', sampleRate, 'SamplesPerFrame', numSamples, ...
+           'OutputDataType', 'double', 'ShowAdvancedProperties', true);
+
+% Use the info method to show the actual values of various hardware-related properties
+rxRadioInfo = info(rx)
+
 run setupModules.m

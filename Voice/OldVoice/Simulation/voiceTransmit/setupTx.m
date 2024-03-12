@@ -1,0 +1,17 @@
+% Setup pulse modulation filter
+rolloff = 0.50;
+sps = 10;
+span = 200;
+rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
+
+partitions = 5;
+
+% preamble = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
+% preamble = repmat(preamble, 50, 1);
+% preamble = repmat(preamble, 50, 1);
+
+preamble1 = [1; 1; 1; 1; 1; 0; 0; 1; 1; 0; 1; 0; 1;]; % Barker code
+preamble2 = [3; 3; 3; 3; 3; 2; 2; 3; 3; 2; 3; 2; 3;];
+% preamble2 = [3; 3; 3; 2; 2; 2; 3; 2; 2; 3; 2]; % Barker code phase-shifted
+% preamble3 = [2; 2; 2; 0; 0; 2; 0]; % Barker code phase-shifted
+preamble = [preamble1; preamble2];

@@ -3,6 +3,13 @@ close all
 
 tic
 [rxSignal, AAvalidData, AAOverflow] = rx();
+% rxSignal = capture(rx, numSamples);
+% rxSignal = interleaving_fewErrors.allRxSignals(:, 1);
+
+% reset(coarseFreqComp);
+% reset(symbolSync);
+% reset(fineFreqComp);
+% rxSignalTemp = rxSignal;
 
 release(coarseFreqComp);
 release(symbolSync);
@@ -36,7 +43,15 @@ decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
 error = symerr(decodedMessage, trueMessage)
+
 toc
+
+% figure(1);
+% hold on;
+% plot(real(rxFiltered(12000:12100)));
+% plot(imag(rxFiltered(12000:12100)));
+% hold off;
+% grid
 
 % scatterplot(rxSignal);
 % scatterplot(rxFiltered);
@@ -44,5 +59,5 @@ toc
 % scatterplot(rxTimingSync);
 % scatterplot(rxSignalFine);
 % scatterplot(rxSignalPhaseCorr);
-scatterplot(rxMessage);
+% scatterplot(rxMessage);
 % scatterplot(rP);

@@ -28,20 +28,24 @@ frameSize = messagePartitionSize;
 
 messagePartition = messageVoice(1 + i*messagePartitionSize:(i+1)*messagePartitionSize);
 
-% message1 = messagePartition(1:frameSize);
-% message2 = messagePartition(frameSize + 1:end);
+message1 = messagePartition(1:frameSize);
+message2 = messagePartition(frameSize + 1:end);
 
 % message = repmat([3; 2; 1; 0;], 250, 1);
 
 rng(1);
-message = randi([0 M-1], 1000, 1);
-
-rng(10); filler1 = randi([0 M-1], 200, 1); filler1Mod = pskmod(filler1, M, pi/M, "gray");
-rng(20); filler2 = randi([0 M-1], 200, 1); filler2Mod = pskmod(filler2, M, pi/M, "gray");
+message = randi([0 4-1], 1000, 1);
 
 % bitStream = [message1; preamble; header; message2];
-% bitStream = [filler1; preamble; header; messagePartition; filler2];
-bitStream = [filler1; preamble; header; message; filler2];
+% bitStream = [preamble; header; messagePartition];
+bitStream = [preamble; header; message];
+
+% message1 = repmat([3; 2; 1; 0;], 20, 1);
+% message2 = repmat([0; 1; 2; 3;], 20, 1);
+% bitStream = [message1; preamble; header; message2;];
+% frameSize = 80;
+
+M = 4;
 
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
