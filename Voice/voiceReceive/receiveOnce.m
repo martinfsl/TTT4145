@@ -22,27 +22,14 @@ rxTimingSync = symbolSync(rxSignalCoarse);
 rxSignalFine = fineFreqComp(rxTimingSync);
 
 % Phase Correction
-[frameStart, corrVal]= estFrameStart(rxSignalFine, preambleMod, bitStream);
+[frameStart, corrVal, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
 % Frame Synchronization
-[rxFrameSynced, rxMessage, rxPreamble, rxHeader] = ...
+[rxFrameSynced, rxMessage, rxHeader] = ...
     frameSync(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
 
 % prevRxSignal = rxSignal;
 
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
-decodedPreamble = pskdemod(rxPreamble, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
-
-error = symerr(decodedMessage, trueMessage)
-toc
-
-% scatterplot(rxSignal);
-% scatterplot(rxFiltered);
-% scatterplot(rxSignalCoarse);
-% scatterplot(rxTimingSync);
-% scatterplot(rxSignalFine);
-% scatterplot(rxSignalPhaseCorr);
-scatterplot(rxMessage);
-% scatterplot(rP);

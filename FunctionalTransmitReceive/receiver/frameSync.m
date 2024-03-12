@@ -1,11 +1,11 @@
-function [frameSynced, rxMessage, rxPreamble, rxHeader] = ...
+function [frameSynced, rxMessage, rxHeader] = ...
     frameSync(rxSignal, frameStart, preamble, frameSize, header)
 
-    if frameStart < 0
-        rxPreamble = zeros(length(preamble), 1);
-    else
-        rxPreamble = rxSignal(frameStart:frameStart+length(preamble)-1);
-    end
+    % if frameStart < 0
+    %     rxPreamble = zeros(length(preamble), 1);
+    % else
+    %     rxPreamble = rxSignal(frameStart:frameStart+length(preamble)-1);
+    % end
 
     rxMessage = ...
         rxSignal(frameStart+length(preamble)+length(header):...

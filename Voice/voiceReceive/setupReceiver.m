@@ -35,8 +35,11 @@ message = zeros(frameSize, 1);
 rng(1);
 trueMessage = randi([0 M-1], 1000, 1);
 
-possibleHeaders = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-header = zeros(6, 1);
+possibleHeaders = [0,  1,  2,  3,  4,  5,  6,  7, ...
+                   8,  9, 10, 11, 12, 13, 14, 15, ...
+                  16, 17, 18, 19, 20, 21, 22, 23, ...
+                  24, 25, 26, 27, 28, 29, 30, 31];
+header = zeros(9, 1);
 
 prevRxSignal = 0;
 
