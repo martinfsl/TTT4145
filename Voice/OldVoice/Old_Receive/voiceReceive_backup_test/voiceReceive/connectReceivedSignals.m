@@ -1,0 +1,1 @@
+connectedSignal = [connectedSignal; decodedMessage];
