@@ -1,7 +1,7 @@
-allMessages = []; allHeaders = [];
+allMessages = []; allHeaders = []; allRxSignals = [];
 corrVal = 0;
 
-amountReceived = 1;
+amountReceived = 58;
 
 while length(allHeaders) < amountReceived
     tic
@@ -44,13 +44,26 @@ while length(allHeaders) < amountReceived
              4*mode(decodedHeader(4:6)) + ...
              1*mode(decodedHeader(7:9));
         
-        if (~ismember(h, allHeaders) && ...
-             ismember(h, possibleHeaders))
-            plot(lags, abs(corr));
-            drawnow;
-            disp("New message found!");
-            allMessages = [allMessages, decodedMessage];
-            allHeaders = [allHeaders; h];
+        if (length(allHeaders) > 10)
+            if (~ismember(h, allHeaders(end-10:end)) && ...
+                 ismember(h, possibleHeaders))
+                % plot(lags, abs(corr));
+                % drawnow;
+                disp("New message found!");
+                allMessages = [allMessages, decodedMessage];
+                allHeaders = [allHeaders; h];
+                allRxSignals = [allRxSignals, rxSignal];
+            end
+        elseif (length(allHeaders) <= 10)
+            if (~ismember(h, allHeaders) && ...
+                 ismember(h, possibleHeaders))
+                % plot(lags, abs(corr));
+                % drawnow;
+                disp("New message found!");
+                allMessages = [allMessages, decodedMessage];
+                allHeaders = [allHeaders; h];
+                allRxSignals = [allRxSignals, rxSignal];
+            end
         end
     end
     toc

@@ -1,11 +1,11 @@
-function [frameStart, corrVal, isValid, correlation, lags, peakIndices] = ...
+function [frameStart, corrVal, isValid, correlation, lags] = ...
     estFrameStart(rxSignal, preamble, bitStream)
 
     isValid = true;
 
     [correlation, lags] = xcorr(rxSignal, preamble);
-    [peakValues, peakIndices] = maxk(abs(correlation), length(preamble));
-    % [peakValues, peakIndices] = maxk(abs(correlation), 4);
+    % [peakValues, peakIndices] = maxk(abs(correlation), length(preamble));
+    [peakValues, peakIndices] = maxk(abs(correlation), 5);
     
     % figure(1);
     % plot(lags, abs(correlation));
@@ -25,9 +25,9 @@ function [frameStart, corrVal, isValid, correlation, lags, peakIndices] = ...
         frameStart = lags(peakIndices(i)) + 1; % Adjust for MATLAB indexing
     end
 
-    disp(size(peakIndices));
+    % disp(size(peakIndices));
 
-    if(abs(lags(peakIndices(i+1) - lags(peakIndices(i)))) < 200)
+    if(abs(lags(peakIndices(i+1) - lags(peakIndices(i)))) < length(bitStream))
         isValid = false;
     end
 
