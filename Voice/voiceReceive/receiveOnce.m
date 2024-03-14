@@ -2,7 +2,7 @@
 close all
 
 tic
-[rxSignal, AAvalidData, AAOverflow] = rx();
+% [rxSignal, AAvalidData, AAOverflow] = rx();
 
 release(coarseFreqComp);
 release(symbolSync);
@@ -22,7 +22,7 @@ rxTimingSync = symbolSync(rxSignalCoarse);
 rxSignalFine = fineFreqComp(rxTimingSync);
 
 % Phase Correction
-[frameStart, corrVal, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
+[frameStart, corrVal, isValid, corr, lags, ]= estFrameStart(rxSignalFine, preambleMod, bitStream);
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
 % Frame Synchronization

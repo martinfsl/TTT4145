@@ -1,7 +1,7 @@
-% allMessages = []; allHeaders = [];
+allMessages = []; allHeaders = [];
 corrVal = 0;
 
-amountReceived = ;
+amountReceived = 1;
 
 while length(allHeaders) < amountReceived
     tic
@@ -26,9 +26,10 @@ while length(allHeaders) < amountReceived
     rxSignalFine = fineFreqComp(rxTimingSync);
     
     % Phase Correction
-    [frameStart, corrVal, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
+    [frameStart, corrVal, isValid, corr, lags] = ...
+        estFrameStart(rxSignalFine, preambleMod, bitStream);
 
-    if corrVal > 30
+    if (corrVal > 30 && isValid)
         rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
         % Frame Synchronization
