@@ -2,7 +2,7 @@ allMessages = []; allHeaders = []; allRxSignals = [];
 corrVal = 0;
 isUnique = 0;
 
-amountReceived = 58;
+amountReceived = 29;
 
 while length(allHeaders) < amountReceived
     tic
@@ -31,6 +31,9 @@ while length(allHeaders) < amountReceived
         estFrameStart(rxSignalFine, preambleMod, bitStream);
 
     if (corrVal > 30 && isValid)
+        % plot(lags, abs(corr));
+        % drawnow;
+
         rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
         % Frame Synchronization
@@ -65,9 +68,14 @@ while length(allHeaders) < amountReceived
             allHeaders = [allHeaders; h];
             allRxSignals = [allRxSignals, rxSignal];
 
-            recVoice = reconstructVoiceSignal(decodedMessage, frameSize);
-            sound(recVoice, 16000);
+            % recVoice = reconstructVoiceSignal(decodedMessage);
+            % sound(recVoice, 16000);
         end
     end
     toc
 end
+
+receivedMessage = allMessages(:);
+
+recVoice = reconstructVoiceSignal(receivedMessage);
+sound(recVoice, 16000);

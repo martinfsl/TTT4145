@@ -2,8 +2,8 @@
 close all
 
 tic
-[rxSignal, AAvalidData, AAOverflow] = rx();
-% rxSignal = allRxSignals(:, 21);
+% [rxSignal, AAvalidData, AAOverflow] = rx();
+% rxSignal = allRxSignals(:, 3);
 
 release(coarseFreqComp);
 release(symbolSync);
@@ -24,6 +24,9 @@ rxSignalFine = fineFreqComp(rxTimingSync);
 
 % Phase Correction
 [frameStart, corrVal, isValid, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
+
+plot(lags, abs(corr));
+
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
 % Frame Synchronization
@@ -35,10 +38,8 @@ rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevR
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
 
-% plot(lags, abs(corr));
-
-% scatterplot(rxTimingSync);
-% scatterplot(rxSignalFine);
-% scatterplot(rxPreamble);
-% scatterplot(rxSignalPhaseCorr);
+scatterplot(rxTimingSync);
+scatterplot(rxSignalFine);
+scatterplot(rxPreamble);
+scatterplot(rxSignalPhaseCorr);
 scatterplot(rxMessage);
