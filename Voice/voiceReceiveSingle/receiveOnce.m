@@ -2,7 +2,7 @@
 close all
 
 tic
-[rxSignal, AAvalidData, AAOverflow] = rx();
+% [rxSignal, AAvalidData, AAOverflow] = rx();
 % rxSignal = allRxSignals(:, 3);
 
 release(coarseFreqComp);

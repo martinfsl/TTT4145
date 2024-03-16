@@ -1,7 +1,7 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
+% sampleRate = 1e6;
 sampleRate = 1e6;
-% sampleRate = 500e3;
 % centerFreq = 1.8e9;
 centerFreq = 1.804e9;
 
@@ -28,12 +28,12 @@ sps = 10;
 span = 200;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 1000;
+frameSize = 2900;
 
 message = zeros(frameSize, 1);
 
 rng(1);
-trueMessage = randi([0 M-1], 1000, 1);
+trueMessage = randi([0 M-1], frameSize, 1);
 
 possibleHeaders = [0,  1,  2,  3,  4,  5,  6,  7, ...
                    8,  9, 10, 11, 12, 13, 14, 15, ...

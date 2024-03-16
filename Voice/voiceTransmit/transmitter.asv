@@ -15,33 +15,27 @@
 %%% ---------------------------------------------------
 % Partition the voice signal
 
-partitions = 10;
+partitions = 29;
 voiceMessageCut = voiceMessage(1:29000);
 
-messages = reshape(voiceMessageCut, [length(voiceMessageCut)/partitions, partitions]);
+messages = reshape(voiceMessageCut, [1000, 29]);
 
 %%% ---------------------------------------------------
 
 %%% ---------------------------------------------------
 rng(630);
 
-% init = [zeros(200, 1); zeros(52, 1); zeros(9, 1); zeros(1000, 1); zeros(200, 1)];
-% initMod = pskmod(init, M, pi/M, "gray");
-% txSignal = upfirdn(initMod, rrcFilter, sps, 1);
-% tx(txSignal);
+init = [zeros(1:200); preamble; header; message; filler(201:end)];
+initMod = pskmod(init, M, pi/M, "gray");
+txSignal = upfirdn(, rrcFilter, sps, 1);
+tx(txSignal);
 
 % Iterate through and send all messages
 for i = 1:size(messages, 2)
     % i = 23;
 
-    if i <= 32
-        j = i;
-    elseif i > 32
-        j = i-32;
-    end
-
-    message = messages(:, j);
-    header = headers(:, j);
+    message = messages(:, i);
+    header = headers(:, i);
 
     filler = randi([0 M-1], fillerSize*2, 1);
 
@@ -50,12 +44,12 @@ for i = 1:size(messages, 2)
 
     txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
 
-    transmitRepeat(tx, txSignal);
-    % tx(txSignal);
+    % transmitRepeat(tx, txSignal);
+    tx();
 
     fprintf("%s %i \n", "Transmitting: ", i);
 
-    pause(0.25);
+    % pause(1);
 end
 release(tx);
 
@@ -64,20 +58,20 @@ release(tx);
 %%% ---------------------------------------------------
 
 % Continously send one signal
-% i = 1;
-% 
-% message = messages(:, i);
-% header = headers(:, i);
-% 
-% filler = randi([0 M-1], fillerSize*2, 1);
-% 
-% bitStream = [filler(1:200); preamble; header; message; filler(201:end)];
-% bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
-% 
-% txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
-% 
+i = 15;
+
+message = messages(:, i);
+header = headers(:, i);
+
+filler = randi([0 M-1], fillerSize*2, 1);
+
+bitStream = [filler(1:200); preamble; header; message; filler(201:end)];
+bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
+
 % transmitRepeat(tx, txSignal);
-% tx(txSignal);
-% release(tx);
+tx(txSignal);
+release(tx);
 
 %%% ---------------------------------------------------

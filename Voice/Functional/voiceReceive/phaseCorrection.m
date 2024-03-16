@@ -1,4 +1,4 @@
-function phaseCorr = phaseCorrection(rxSignal, preamble, frameStartIndex, prevRxSignal)
+function [phaseCorr, phaseDiff] = phaseCorrection(rxSignal, preamble, frameStartIndex, prevRxSignal)
 
     if frameStartIndex <= 0
         receivedPreamble = prevRxSignal(end+frameStartIndex+1:end);

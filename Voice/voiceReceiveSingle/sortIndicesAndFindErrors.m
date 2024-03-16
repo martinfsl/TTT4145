@@ -16,7 +16,6 @@ cd(Current_Dir);
 trueMessage = trueMessage(1:29000);
 % trueMessage = repmat(trueMessage, 2, 1);
 messages = reshape(trueMessage, [frameSize, length(trueMessage)/frameSize]);
-% messages = reshape(trueMessage, [1000, 58]);
 
 errorsSorted = [];
 
