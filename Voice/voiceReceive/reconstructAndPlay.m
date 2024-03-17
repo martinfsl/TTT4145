@@ -1,8 +1,8 @@
-receivedMessages = [];
-for i = 1:size(allMessages, 2)
-    receivedMessages = [receivedMessages; allMessages(:, i)];
-end
+% receivedMessages = [];
+% for i = 1:(2*size(allMessages, 2)-2)
+%     receivedMessages = [receivedMessages; allMessages(:, i)];
+% end
 
-recVoice = reconstructVoiceSignal(receivedMessages);
+recVoice = reconstructVoiceSignal(allMessages(:));
 
 sound(recVoice, 16000);
