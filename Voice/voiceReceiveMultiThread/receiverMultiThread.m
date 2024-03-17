@@ -1,5 +1,5 @@
 allMessages = [];
-allHeaders = []; 
+allHeaders = repmat(33, 1, 10); 
 allRxSignals = [];
 
 global buffer;
@@ -15,13 +15,12 @@ bufferTimer = timer('ExecutionMode', 'fixedRate', ...
 start(bufferTimer);
 
 corrVal = 0;
-isUnique = 0;
 
-phase = 0; freqOffset = 0;
+phase = 0;
 
 amountReceived  = 10;
 
-while length(allHeaders) < amountReceived
+while length(allHeaders(11:end)) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();
 
@@ -40,11 +39,8 @@ while length(allHeaders) < amountReceived
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
     % rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
     
-    % t = [0:length(rxFiltered)-1]'/sampleRate;
-    % rxFilteredCorr = rxFiltered .* exp(-1i*2*pi*freqOffset*t);
-
     % CFC
-    [rxSignalCoarse, freqOffset] = coarseFreqComp(rxFiltered);
+    rxSignalCoarse = coarseFreqComp(rxFiltered);
     
     % Timing Synchronization
     rxTimingSync = symbolSync(rxSignalCoarse);
@@ -75,19 +71,9 @@ while length(allHeaders) < amountReceived
              4*mode(decodedHeader(4:6)) + ...
              1*mode(decodedHeader(7:9));
 
-        if (length(allHeaders) > 10)
-            if (~ismember(h, allHeaders(end-10:end)) && ...
-                 ismember(h, possibleHeaders))
-                isUnique = 1;
-            end
-        elseif (length(allHeaders) <= 10)
-            if (~ismember(h, allHeaders) && ...
-                 ismember(h, possibleHeaders))
-                isUnique = 1;
-            end
-        end
-
-        if isUnique
+        if (~ismember(h, allHeaders(end-9:end)) && ...
+             ismember(h, possibleHeaders))
+            
             disp("Found message");
     
             allMessages = [allMessages, decodedMessage];
@@ -101,9 +87,9 @@ while length(allHeaders) < amountReceived
             fprintf("%s %i\n", "The error was: ", error);
         end
     end
-    isUnique = 0;
 
     toc
 end
 
 stop(bufferTimer);
+allHeaders = allHeaders(11:end);
