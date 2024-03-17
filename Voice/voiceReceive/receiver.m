@@ -6,7 +6,7 @@ isUnique = 0;
 
 phase = 0;
 
-amountReceived = 10;
+amountReceived = 64;
 
 while length(allHeaders) < amountReceived
     tic

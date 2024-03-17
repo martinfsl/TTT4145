@@ -2,8 +2,8 @@
 close all
 
 tic
-[rxSignal, AAvalidData, AAOverflow] = rx();
-% rxSignal = allRxSignals(:, 3);
+% [rxSignal, AAvalidData, AAOverflow] = rx();
+rxSignal = allRxSignals(:, 40);
 
 release(coarseFreqComp);
 release(symbolSync);
@@ -44,4 +44,4 @@ toc
 % scatterplot(rxSignalFine);
 % scatterplot(rxPreamble);
 % scatterplot(rxSignalPhaseCorr);
-% scatterplot(rxMessage);
+scatterplot(rxMessage);
