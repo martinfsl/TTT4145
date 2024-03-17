@@ -2,13 +2,15 @@ function processBuffer()
     global buffer;
     global bufferProcessSize;
 
-    disp("Process Buffer called");
     % fprintf("%s %i %i\n", "Processed Buffer called, ", length(buffer), bufferProcessSize);
 
-    if length(buffer) >= bufferProcessSize
+    if size(buffer, 2) >= bufferProcessSize
         disp("Buffer is larger than specified size");
-        % processedData = buffer(1:bufferProcessSize);
 
-        % buffer = buffer(bufferProcessSize+1:end);
+        buffer = buffer(:, bufferProcessSize+1:end);
+
+        disp("Playing sound");
+        sound(buffer(:), 16000);
+        disp("Played sound");
     end
 end
