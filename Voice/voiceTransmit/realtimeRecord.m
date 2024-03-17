@@ -2,9 +2,9 @@ fs = 16e3;
 numChannels = 1; 
 % frameSize = 2^8;
 
-audioFrameSize = 2900;
+frameSize = 2900;
 
-audioInput = audioDeviceReader('SampleRate', fs, 'NumChannels', numChannels, 'SamplesPerFrame', audioFrameSize);
+audioInput = audioDeviceReader('SampleRate', fs, 'NumChannels', numChannels, 'SamplesPerFrame', frameSize/4);
 
 % figure;
 % plotHandle = plot(zeros(frameSize,1)); 
@@ -18,7 +18,7 @@ voiceMessages = [];
 % Process real-time audio
 amount = 0;
 % while true
-while amount < 32
+while amount < 64
     % Read audio data from the input device
     audioData = audioInput();
 
@@ -32,6 +32,7 @@ while amount < 32
     % drawnow;
 
     amount = amount + 1;
+    disp(amount);
 end
 release(audioInput);
 

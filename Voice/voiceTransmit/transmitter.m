@@ -15,10 +15,12 @@
 %%% ---------------------------------------------------
 % Partition the voice signal
 
-partitions = 10;
-voiceMessageCut = voiceMessage(1:29000);
+% partitions = 10;
+% voiceMessageCut = voiceMessage(1:29000);
+% 
+% messages = reshape(voiceMessageCut, [length(voiceMessageCut)/partitions, partitions]);
 
-messages = reshape(voiceMessageCut, [length(voiceMessageCut)/partitions, partitions]);
+messages = voiceMessages;
 
 %%% ---------------------------------------------------
 
@@ -31,7 +33,8 @@ rng(630);
 % tx(txSignal);
 
 % Iterate through and send all messages
-for i = 1:size(messages, 2)
+% for i = 1:size(messages, 2)
+for i = 1:64
     % i = 23;
 
     if i <= 32
@@ -40,7 +43,7 @@ for i = 1:size(messages, 2)
         j = i-32;
     end
 
-    message = messages(:, j);
+    message = messages(:, i);
     header = headers(:, j);
 
     filler = randi([0 M-1], fillerSize*2, 1);
@@ -55,7 +58,7 @@ for i = 1:size(messages, 2)
 
     fprintf("%s %i \n", "Transmitting: ", i);
 
-    pause(0.25);
+    pause(0.35);
 end
 release(tx);
 
