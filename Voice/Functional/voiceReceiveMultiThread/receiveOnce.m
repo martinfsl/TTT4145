@@ -47,7 +47,7 @@ toc
 % scatterplot(rxTimingSync);
 % scatterplot(rxSignalFine);
 % scatterplot(rxSignalPhaseCorr);
-% scatterplot(rxMessage);
+scatterplot(rxMessage);
 
 error = min(symerr(decodedMessage, trueMessages));
 fprintf("%s %i\n", "The error was: ", error);

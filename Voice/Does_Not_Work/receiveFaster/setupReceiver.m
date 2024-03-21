@@ -1,5 +1,6 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
+% sampleRate = 1e6;
 sampleRate = 1e6;
 % centerFreq = 1.8e9;
 centerFreq = 1.804e9;
@@ -31,9 +32,6 @@ frameSize = 2900;
 
 message = zeros(frameSize, 1);
 
-rng(1);
-trueMessage = randi([0 M-1], frameSize, 1);
-
 possibleHeaders = [0,  1,  2,  3,  4,  5,  6,  7, ...
                    8,  9, 10, 11, 12, 13, 14, 15, ...
                   16, 17, 18, 19, 20, 21, 22, 23, ...
@@ -42,7 +40,7 @@ header = zeros(9, 1);
 
 prevRxSignal = 0;
 
-filler = zeros(200, 1);
+filler = zeros(0, 1);
 
 % bitStream = [message; preamble; header; message];
 % bitStream = [preamble; header; message];
@@ -56,3 +54,21 @@ numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 
 run setupPluto.m
 run setupModules.m
+%%% -----------------------------------------------------
+%%% -----------------------------------------------------
+% Setup true message if necessary
+
+% rng(1);
+% trueMessage = randi([0 M-1], frameSize, 1);
+
+Current_Dir = pwd;
+TransmitPath = '../voiceTransmit';
+
+cd(TransmitPath);
+[trueMessage, ~] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
+cd(Current_Dir);
+
+trueMessage = trueMessage(1:29000);
+trueMessages = reshape(trueMessage, [frameSize, length(trueMessage)/frameSize]);
+
+%%% -----------------------------------------------------

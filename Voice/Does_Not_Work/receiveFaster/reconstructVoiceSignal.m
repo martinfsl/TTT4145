@@ -22,7 +22,7 @@ function voiceSignalRec = reconstructVoiceSignal(symbols)
     % Assuming 8 bits per sample
     nBits = 8;
     nLevels = 2^nBits;
-    nSamples = nSymbols*2 / nBits;
+    nSamples = floor(nSymbols*2 / nBits);
     y_quantized_reconstructed = zeros(nSamples, 1);
     
     for i = 1:nSamples

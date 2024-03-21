@@ -1,36 +1,16 @@
-allMessages = [];
-allHeaders = []; 
+allMessages = []; allHeaders = []; 
 allRxSignals = [];
-
-global buffer;
-buffer = [];
-
-global bufferProcessSize;
-bufferProcessSize = 5;
-
-% % Declaring the function that shall be run to process the buffer
-bufferTimer = timer('ExecutionMode', 'fixedRate', ...
-                    'Period', 0.05, ... % Adjust the period to suit your needs
-                    'TimerFcn', @(~,~) processBuffer());
-start(bufferTimer);
-
+% rxSignals = [];
 corrVal = 0;
 isUnique = 0;
 
 phase = 0; freqOffset = 0;
 
-amountReceived  = 10;
+amountReceived = 10;
 
-% while length(allHeaders) < amountReceived
-%     tic
-%     [rxSignal, AAvalidData, AAOverflow] = rx();
-
-% Remember to comment out the initalization of allRxSignals
-% i = 0;
-% while i < 10
-%     tic
-%     rxSignal = allRxSignals(:, i+1);
-%     i + 1;
+while length(allHeaders) < amountReceived
+    tic
+    [rxSignal, AAvalidData, AAOverflow] = rx();
 
     release(coarseFreqComp);
     release(symbolSync);
@@ -40,11 +20,11 @@ amountReceived  = 10;
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
     % rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
     
-    % t = [0:length(rxFiltered)-1]'/sampleRate;
-    % rxFilteredCorr = rxFiltered .* exp(-1i*2*pi*freqOffset*t);
+    t = [0:length(rxFiltered)-1]'/sampleRate;
+    rxFilteredCorr = rxFiltered .* exp(-1i*2*pi*freqOffset*t);
 
     % CFC
-    [rxSignalCoarse, freqOffset] = coarseFreqComp(rxFiltered);
+    [rxSignalCoarse, freqOffset] = coarseFreqComp(rxFilteredCorr);
     
     % Timing Synchronization
     rxTimingSync = symbolSync(rxSignalCoarse);
@@ -55,8 +35,13 @@ amountReceived  = 10;
     % Phase Correction
     [frameStart, corrVal, isValid, corr, lags] = ...
         estFrameStart(rxSignalFine, preambleMod, bitStream);
+    
+    % plot(lags, abs(corr));
+    % drawnow;
 
     if (corrVal > 30 && isValid)
+        % plot(lags, abs(corr));
+        % drawnow;
 
         rxSignalFine = rxSignalFine .* exp(-1i * phase);
 
@@ -68,13 +53,16 @@ amountReceived  = 10;
             frameSync(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
         
         % prevRxSignal = rxSignal;
+
         decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
         decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
+        % decodedMessage = pskdemodSelf(rxMessage);
+        % decodedHeader = pskdemodSelf(rxHeader);
 
         h = 16*mode(decodedHeader(1:3)) + ...
              4*mode(decodedHeader(4:6)) + ...
              1*mode(decodedHeader(7:9));
-
+        
         if (length(allHeaders) > 10)
             if (~ismember(h, allHeaders(end-10:end)) && ...
                  ismember(h, possibleHeaders))
@@ -88,22 +76,21 @@ amountReceived  = 10;
         end
 
         if isUnique
-            disp("Found message");
-    
+            % plot(lags, abs(corr));
+            % drawnow;
+            disp("New message found!");
             allMessages = [allMessages, decodedMessage];
-            allHeaders = [allHeaders, h];
+            allHeaders = [allHeaders; h];
             allRxSignals = [allRxSignals, rxSignal];
-    
-            buffer = [buffer, decodedMessage];
-            disp(size(buffer));
-    
-            error = symerr(decodedMessage, trueMessages(:, h+1));
+
+            error = min(symerr(decodedMessage, trueMessages));
             fprintf("%s %i\n", "The error was: ", error);
+
+            % recVoice = reconstructVoiceSignal(decodedMessage);
+            % sound(recVoice, 16000);
         end
     end
     isUnique = 0;
 
     toc
 end
-
-stop(bufferTimer);

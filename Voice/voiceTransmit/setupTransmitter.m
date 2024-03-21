@@ -1,7 +1,7 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
-% sampleRate = 1e6;
 sampleRate = 1e6;
+% sampleRate = 2e6;
 centerFreq = 1.804e9;
 % centerFreq = 1.798e9;
 

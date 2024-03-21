@@ -6,7 +6,7 @@ isUnique = 0;
 
 phase = 0; freqOffset = 0;
 
-amountReceived = 1;
+amountReceived = 10;
 
 while length(allHeaders) < amountReceived
     tic
@@ -53,8 +53,11 @@ while length(allHeaders) < amountReceived
             frameSync(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
         
         % prevRxSignal = rxSignal;
+
         decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
         decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
+        % decodedMessage = pskdemodSelf(rxMessage);
+        % decodedHeader = pskdemodSelf(rxHeader);
 
         h = 16*mode(decodedHeader(1:3)) + ...
              4*mode(decodedHeader(4:6)) + ...
@@ -80,6 +83,9 @@ while length(allHeaders) < amountReceived
             allHeaders = [allHeaders; h];
             allRxSignals = [allRxSignals, rxSignal];
 
+            error = min(symerr(decodedMessage, trueMessages));
+            fprintf("%s %i\n", "The error was: ", error);
+
             % recVoice = reconstructVoiceSignal(decodedMessage);
             % sound(recVoice, 16000);
         end
@@ -88,4 +94,3 @@ while length(allHeaders) < amountReceived
 
     toc
 end
-

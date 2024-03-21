@@ -4,9 +4,9 @@ allRxSignals = [];
 corrVal = 0;
 isUnique = 0;
 
-phase = 0;
+phase = 0; freqOffset = 0;
 
-amountReceived = 10;
+amountReceived = 1;
 
 while length(allHeaders) < amountReceived
     tic
@@ -20,8 +20,11 @@ while length(allHeaders) < amountReceived
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
     % rxFiltered = rxFiltered(sps*span+1:end-(sps*span-1));
     
+    t = [0:length(rxFiltered)-1]'/sampleRate;
+    rxFilteredCorr = rxFiltered .* exp(-1i*2*pi*freqOffset*t);
+
     % CFC
-    rxSignalCoarse = coarseFreqComp(rxFiltered);
+    [rxSignalCoarse, freqOffset] = coarseFreqComp(rxFilteredCorr);
     
     % Timing Synchronization
     rxTimingSync = symbolSync(rxSignalCoarse);
@@ -86,7 +89,3 @@ while length(allHeaders) < amountReceived
     toc
 end
 
-receivedMessage = allMessages(:);
-
-recVoice = reconstructVoiceSignal(receivedMessage);
-sound(recVoice, 16000);
