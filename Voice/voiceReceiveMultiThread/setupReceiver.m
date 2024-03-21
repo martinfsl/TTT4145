@@ -25,7 +25,7 @@ preambleMod = pskmod(preamble, M, pi/M, "gray");
 % Setup pulse modulation filter
 rolloff = 0.75;
 sps = 6;
-span = 50;
+span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 frameSize = 2900;
@@ -49,8 +49,8 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 % Setup the receiver
 % numSamples = 3000;
-numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
-% numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+% numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
+numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 % numSamples = round(4*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 % numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
 
