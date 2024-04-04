@@ -6,12 +6,12 @@ frameSize = 2900;
 
 audioInput = audioDeviceReader('SampleRate', fs, 'NumChannels', numChannels, 'SamplesPerFrame', frameSize/4);
 
-% figure;
-% plotHandle = plot(zeros(frameSize,1)); 
-% xlabel('Time (s)');
-% ylabel('Amplitude');
-% ylim([-1 4]);
-% title('Real-time Audio Input');
+figure;
+plotHandle = plot(zeros(frameSize,1)); 
+xlabel('Time (s)');
+ylabel('Amplitude');
+ylim([-1 4]);
+title('Real-time Audio Input');
 
 voiceMessages = [];
 
@@ -28,8 +28,8 @@ while amount < 64
 
     voiceMessages = [voiceMessages, processedData];
 
-    % set(plotHandle, 'YData', processedData);
-    % drawnow;
+    set(plotHandle, 'YData', processedData);
+    drawnow;
 
     amount = amount + 1;
     disp(amount);
