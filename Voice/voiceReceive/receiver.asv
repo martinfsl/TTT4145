@@ -12,7 +12,7 @@ setup(deviceWriter, zeros(10*frameSize/4, 1));
 
 phase = 0;
 
-amountReceived = 40;
+amountReceived = 20;
 
 backwardView = 10;
 
@@ -85,23 +85,23 @@ while length(allHeaders) < amountReceived
             % plot(lags, abs(corr));
             % drawnow;
             disp("New message found!");
+            allMessages = [allMessages, decodedMessage];
+            allHeaders = [allHeaders; h];
+            allRxSignals = [allRxSignals, rxSignal];
 
             error = min(symerr(decodedMessage, trueMessages));
             fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
 
-            buffer = [buffer, decodedMessage];
-            if size(buffer, 2) == 10
-                disp("Playing sound");
+            if length(buffer) == 10
+                disp("Playing sound";)
                 deviceWriter(reconstructVoiceSignal(buffer(:)));
                 buffer = [];
+            else
+                buffer = [buffer, decodedMessage];
             end
 
             % recVoice = reconstructVoiceSignal(decodedMessage);
             % sound(recVoice, 16000);
-
-            allMessages = [allMessages, decodedMessage];
-            allHeaders = [allHeaders; h];
-            allRxSignals = [allRxSignals, rxSignal];
         end
     end
     isUnique = 0;

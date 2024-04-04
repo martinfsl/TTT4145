@@ -5,11 +5,11 @@ close all
 
 tic
 [rxSignal, AAvalidData, AAOverflow] = rx();
-% rxSignal = [rxSignal; overlapBuffer];
+% rxSignal = allRxSignals(:, 1);
 
-% release(coarseFreqComp);
-% release(symbolSync);
-% release(fineFreqComp);
+release(coarseFreqComp);
+release(symbolSync);
+release(fineFreqComp);
 
 % Matched Filtering
 rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
@@ -25,11 +25,7 @@ rxTimingSync = symbolSync(rxSignalCoarse);
 rxSignalFine = fineFreqComp(rxTimingSync);
 
 % Phase Correction
-[frameStart, corrVal, isValid, corr, lags] = ...
-    estFrameStartNew(rxSignalFine, preambleMod, bitStream);
-
-plot(lags, abs(corr));
-
+[frameStart, corrVal, isValid, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
 % Frame Synchronization
@@ -40,11 +36,8 @@ rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevR
 
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
-
-error = min(symerr(decodedMessage, trueMessages));
-fprintf("%s %i\n", "The error was: ", error);
-
-% overlapBuffer = rxSignal(end-overlapSize+1:end);
+% decodedMessage = pskdemodSelf(rxMessage);
+% decodedHeader = pskdemodSelf(rxHeader);
 
 toc
 
@@ -55,3 +48,6 @@ toc
 % scatterplot(rxSignalFine);
 % scatterplot(rxSignalPhaseCorr);
 % scatterplot(rxMessage);
+
+error = min(symerr(decodedMessage, trueMessages));
+fprintf("%s %i\n", "The error was: ", error);

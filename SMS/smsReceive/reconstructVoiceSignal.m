@@ -28,7 +28,11 @@ function voiceSignalRec = reconstructVoiceSignal(symbols)
     for i = 1:nSamples
         startIndex = (i-1) * nBits + 1;
         endIndex = i * nBits;
-        y_quantized_reconstructed(i) = bit2int(y_bits_reconstructed(startIndex:endIndex), 8);
+        % y_quantized_reconstructed(i) = bit2int(y_bits_reconstructed(startIndex:endIndex), 8);
+        bits = y_bits_reconstructed(startIndex:endIndex);
+        y_quantized_reconstructed(i) = ...
+            1*bits(end) + 2*bits(end-1) + 4*bits(end-2) + 8*bits(end-3) + ...
+            16*bits(end-4) + 32*bits(end-5) + 64*bits(end-6) + 128*bits(end-7);
     end
     
     % y_dequantized = (double(y_quantized_reconstructed) / ((nLevels/2) - 1)) - 1;

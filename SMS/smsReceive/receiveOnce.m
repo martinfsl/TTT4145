@@ -4,8 +4,8 @@ close all
 % profile on
 
 tic
-% [rxSignal, AAvalidData, AAOverflow] = rx();
-rxSignal = allRxSignals(:, 9);
+[rxSignal, AAvalidData, AAOverflow] = rx();
+% rxSignal = allRxSignals(:, 1);
 
 release(coarseFreqComp);
 release(symbolSync);
@@ -27,8 +27,6 @@ rxSignalFine = fineFreqComp(rxTimingSync);
 % Phase Correction
 [frameStart, corrVal, isValid, corr, lags]= estFrameStart(rxSignalFine, preambleMod, bitStream);
 rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
-
-plot(lags, abs(corr));
 
 % Frame Synchronization
 [rxFrameSynced, rxMessage, rxHeader] = ...

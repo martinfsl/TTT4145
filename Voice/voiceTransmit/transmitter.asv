@@ -1,6 +1,30 @@
 % release(tx);
 
 %%% ---------------------------------------------------
+% Read voice message
+
+% If you want symbols (0, 3)
+[voiceMessage, fs] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
+
+% If you want bits
+% [voiceMessageBits, fs] = setupVoiceFromFileBits("VoiceFiles/stry(1).wav");
+% voiceMessageBitsMod = pskmod(voiceMessageBits, M, pi/M, "gray", InputType = 'bit');
+
+%%% ---------------------------------------------------
+
+%%% ---------------------------------------------------
+% Partition the voice signal
+
+partitions = 10;
+voiceMessageCut = voiceMessage(1:29000);
+
+messages = reshape(voiceMessageCut, [length(voiceMessageCut)/partitions, partitions]);
+
+% messages = voiceMessages;
+
+%%% ---------------------------------------------------
+
+%%% ---------------------------------------------------
 rng(630);
 
 % init = [zeros(200, 1); zeros(52, 1); zeros(9, 1); zeros(1000, 1); zeros(200, 1)];
@@ -11,7 +35,7 @@ rng(630);
 % Iterate through and send all messages
 k = 1;
 j = 1;
-for i = 1:20*size(messages, 2)
+for i = 1:10size(messages, 2)
 
     if k == (size(messages, 2) + 1)
         k = 1;
@@ -46,8 +70,7 @@ for i = 1:20*size(messages, 2)
     if i == 1
         pause(0.4);
     else
-        % pause(0.1);
-        pause(0.065);
+        pause(0.1);
     end
 end
 release(tx);

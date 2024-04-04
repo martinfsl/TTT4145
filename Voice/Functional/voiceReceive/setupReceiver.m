@@ -1,9 +1,13 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
-sampleRate = 1e6;
+% sampleRate = 1e6;
 % sampleRate = 2e6;
 % centerFreq = 1.8e9;
-centerFreq = 1.804e9;
+% centerFreq = 1.804e9;
+
+% sampleRate = 200e3;
+sampleRate = 1e6;
+centerFreq = 1.802e9;
 
 M = 4;
 
@@ -24,11 +28,11 @@ preambleMod = pskmod(preamble, M, pi/M, "gray");
 
 % Setup pulse modulation filter
 rolloff = 0.75;
-sps = 6;
+sps = 8;
 span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 7056;
+frameSize = 2900;
 
 message = zeros(frameSize, 1);
 
@@ -46,6 +50,9 @@ filler = zeros(0, 1);
 % bitStream = [preamble; header; message];
 bitStream = [filler; preamble; header; message; filler];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+overlapSize = sps*(length(bitStream) + span);
+overlapBuffer = zeros(overlapSize, 1);
 %%% -----------------------------------------------------
 % Setup the receiver
 % numSamples = 3000;
@@ -60,17 +67,17 @@ run setupModules.m
 %%% -----------------------------------------------------
 % Setup true message if necessary
 
-% % rng(1);
-% % trueMessage = randi([0 M-1], frameSize, 1);
-% 
-% Current_Dir = pwd;
-% TransmitPath = '../voiceTransmit';
-% 
-% cd(TransmitPath);
-% [trueMessage, ~] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
-% cd(Current_Dir);
-% 
-% trueMessage = trueMessage(1:29000);
-% trueMessages = reshape(trueMessage, [frameSize, length(trueMessage)/frameSize]);
+% rng(1);
+% trueMessage = randi([0 M-1], frameSize, 1);
+
+Current_Dir = pwd;
+TransmitPath = '../voiceTransmit';
+
+cd(TransmitPath);
+[trueMessage, ~] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
+cd(Current_Dir);
+
+trueMessage = trueMessage(1:29000);
+trueMessages = reshape(trueMessage, [frameSize, length(trueMessage)/frameSize]);
 
 %%% -----------------------------------------------------

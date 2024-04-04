@@ -8,8 +8,8 @@ fillerSize = 0;
 %%% ---------------------------------------------------
 % Setup pulse modulation filter
 rolloff = 0.75;
-sps = 8;
-span = 40;
+sps = 10;
+span = 2000;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 %%% ---------------------------------------------------
 

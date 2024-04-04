@@ -4,17 +4,13 @@ allRxSignals = [];
 corrVal = 0;
 isUnique = 0;
 
-buffer = [];
-
 deviceWriter = audioDeviceWriter('SampleRate', 16000);
-setup(deviceWriter, zeros(10*frameSize/4, 1));
-% setup(deviceWriter, zeros(frameSize/4, 1));
+% setup(deviceWriter, zeros(10*frameSize/4, 1));
+setup(deviceWriter, zeros(frameSize/4, 1));
 
 phase = 0;
 
-amountReceived = 40;
-
-backwardView = 10;
+amountReceived = 10;
 
 while length(allHeaders) < amountReceived
     tic
@@ -39,13 +35,12 @@ while length(allHeaders) < amountReceived
     
     % Phase Correction
     [frameStart, corrVal, isValid, corr, lags] = ...
-        estFrameStartNew(rxSignalFine, preambleMod, bitStream);
+        estFrameStart(rxSignalFine, preambleMod, bitStream);
     
     % plot(lags, abs(corr));
     % drawnow;
 
-    % if (corrVal > 20 && isValid)
-    if (corrVal > 20 && isValid && frameStart ~= 0)
+    if (corrVal > 20 && isValid)
         % plot(lags, abs(corr));
         % drawnow;
 
@@ -69,6 +64,7 @@ while length(allHeaders) < amountReceived
              4*mode(decodedHeader(4:6)) + ...
              1*mode(decodedHeader(7:9));
         
+        backwardView = 1;
         if (length(allHeaders) > backwardView)
             if (~ismember(h, allHeaders(end-backwardView:end)) && ...
                  ismember(h, possibleHeaders))
@@ -85,28 +81,24 @@ while length(allHeaders) < amountReceived
             % plot(lags, abs(corr));
             % drawnow;
             disp("New message found!");
-
-            error = min(symerr(decodedMessage, trueMessages));
-            fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
-
-            buffer = [buffer, decodedMessage];
-            if size(buffer, 2) == 10
-                disp("Playing sound");
-                deviceWriter(reconstructVoiceSignal(buffer(:)));
-                buffer = [];
-            end
-
-            % recVoice = reconstructVoiceSignal(decodedMessage);
-            % sound(recVoice, 16000);
-
             allMessages = [allMessages, decodedMessage];
             allHeaders = [allHeaders; h];
             allRxSignals = [allRxSignals, rxSignal];
+
+            error = min(symerr(decodedMessage, trueMessages));
+            fprintf("%s %i\n", "The error was: ", error);
+
+            deviceWriter(reconstructVoiceSignal(decodedMessage));
+
+            % recVoice = reconstructVoiceSignal(decodedMessage);
+            % sound(recVoice, 16000);
         end
     end
     isUnique = 0;
 
     toc
+
+    pause(0.1);
 end
 
 % deviceWriter(reconstructVoiceSignal(allMessages(:)));

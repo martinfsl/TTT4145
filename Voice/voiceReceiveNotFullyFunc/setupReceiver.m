@@ -1,9 +1,14 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
 % sampleRate = 1e6;
-sampleRate = 1e6;
+% sampleRate = 2e6;
+
 % centerFreq = 1.8e9;
-centerFreq = 1.804e9;
+% centerFreq = 1.804e9;
+
+sampleRate = 200e3;
+% sampleRate = 5e6;
+centerFreq = 1.802e9; % This frequency allows a wider band (higher fs)
 
 M = 4;
 
@@ -24,11 +29,11 @@ preambleMod = pskmod(preamble, M, pi/M, "gray");
 
 % Setup pulse modulation filter
 rolloff = 0.75;
-sps = 10;
-span = 200;
+sps = 6;
+span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 2900;
+frameSize = 5800;
 
 message = zeros(frameSize, 1);
 
@@ -49,8 +54,9 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 % Setup the receiver
 % numSamples = 3000;
-% numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
-numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
+% numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+% numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
 
 run setupPluto.m
 run setupModules.m
