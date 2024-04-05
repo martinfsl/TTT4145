@@ -1,5 +1,9 @@
 function [voiceMessage, Fs] = setupVoiceFromFile(file)
     [y, Fs] = audioread(file);
+
+    if mod(length(y), 2)
+        y = y(1:end-1);
+    end
     
     nBits = 8;
     nLevels = 2^nBits;  % Number of quantization levels
@@ -9,9 +13,14 @@ function [voiceMessage, Fs] = setupVoiceFromFile(file)
     
     nSymbols = length(y_bits)/2;
     voiceMessage = zeros(nSymbols, 1);
-    
+
     for i = 1:nSymbols
         bits = y_bits((i-1)*2 + 1 : i*2);
-        voiceMessage(i) = bit2int(bits, 2);
+
+        if size(bits, 1) == 1
+            voiceMessage(i) = bit2int(bits', 2);
+        else
+            voiceMessage(i) = bit2int(bits, 2);
+        end
     end
 end

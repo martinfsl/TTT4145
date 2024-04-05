@@ -21,7 +21,7 @@ k = 1;
 % Process real-time audio
 amount = 0;
 % while true
-while amount < 64
+while amount < 100
 
     tic
 
@@ -38,10 +38,16 @@ while amount < 64
         k = 1;
     end
 
-    txSignal = modulateVoice(processedData, ...
-        headers, fillerSize, preamble, rrcFilter, sps, k, M);
+    bitStream = modulateVoice(processedData, ...
+        headers, fillerSize, preamble, k, M);
+
+    bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+    txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
     
     transmitRepeat(tx, txSignal);
+
+    pause(0.5);
 
     % set(plotHandle, 'YData', audioData);
     % drawnow;
@@ -52,3 +58,5 @@ while amount < 64
     toc
 end
 release(audioInput);
+
+release(tx);

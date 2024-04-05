@@ -1,28 +1,32 @@
-allMessages = []; allHeaders = []; 
-allRxSignals = [];
+% allMessages = []; 
+allHeaders = []; 
+% allRxSignals = [];
 % rxSignals = [];
 corrVal = 0;
 isUnique = 0;
 
 buffer = [];
+bufferSize = 1;
 
 deviceWriter = audioDeviceWriter('SampleRate', 16000);
-setup(deviceWriter, zeros(10*frameSize/4, 1));
-% setup(deviceWriter, zeros(frameSize/4, 1));
+% deviceWriter = audioDeviceWriter('SampleRate', 44100);
+
+audioSize = 29000/4;
+audioSize = 14500/4;
+setup(deviceWriter, zeros(audioSize, 1));
 
 phase = 0;
 
-amountReceived = 40;
+backwardView = 1;
 
-backwardView = 10;
-
+amountReceived = 10;
 while length(allHeaders) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();
 
-    release(coarseFreqComp);
-    release(symbolSync);
-    release(fineFreqComp);
+    % release(coarseFreqComp);
+    % release(symbolSync);
+    % release(fineFreqComp);
     
     % Matched Filtering
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
@@ -84,24 +88,28 @@ while length(allHeaders) < amountReceived
         if isUnique
             % plot(lags, abs(corr));
             % drawnow;
-            disp("New message found!");
+            % disp("New message found!");
 
-            error = min(symerr(decodedMessage, trueMessages));
-            fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
+            fprintf("%s %i \n", "New message found - header: ", h+1);
 
-            buffer = [buffer, decodedMessage];
-            if size(buffer, 2) == 10
+            % error = min(symerr(decodedMessage, trueMessages));
+            % fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
+
+            buffer = [buffer; decodedMessage];
+            if size(buffer, 1) == bufferSize*frameSize
                 disp("Playing sound");
-                deviceWriter(reconstructVoiceSignal(buffer(:)));
+                deviceWriter(reconstructVoiceSignal(buffer));
                 buffer = [];
             end
 
             % recVoice = reconstructVoiceSignal(decodedMessage);
             % sound(recVoice, 16000);
 
-            allMessages = [allMessages, decodedMessage];
+            % deviceWriter(reconstructVoiceSignal(decodedMessage));
+
+            % allMessages = [allMessages, decodedMessage];
             allHeaders = [allHeaders; h];
-            allRxSignals = [allRxSignals, rxSignal];
+            % allRxSignals = [allRxSignals, rxSignal];
         end
     end
     isUnique = 0;
@@ -111,4 +119,4 @@ end
 
 % deviceWriter(reconstructVoiceSignal(allMessages(:)));
 
-% sound(reconstructVoiceSignal(allMessages(:)), 44100);
+% sound(reconstructVoiceSignal(allMessages(:)), 16000);

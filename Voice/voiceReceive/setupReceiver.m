@@ -32,7 +32,8 @@ sps = 8;
 span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 2900;
+% frameSize = 2900;
+frameSize = 14500;
 
 message = zeros(frameSize, 1);
 

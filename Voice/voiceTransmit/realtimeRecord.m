@@ -1,4 +1,5 @@
 fs = 16e3; 
+% fs = 48e3;
 numChannels = 1; 
 % frameSize = 2^8;
 
@@ -10,7 +11,8 @@ figure;
 plotHandle = plot(zeros(frameSize,1)); 
 xlabel('Time (s)');
 ylabel('Amplitude');
-ylim([-1 4]);
+% ylim([-1 4]);
+ylim([-1 1]);
 title('Real-time Audio Input');
 
 voiceMessages = [];
@@ -24,11 +26,11 @@ while amount < 64
 
     % Signal processing
     % q_audioData = quantize_signal(audioData);
-    processedData = processData(audioData);
+    processedData = 50*processData(audioData);
 
     voiceMessages = [voiceMessages, processedData];
 
-    set(plotHandle, 'YData', processedData);
+    set(plotHandle, 'YData', audioData);
     drawnow;
 
     amount = amount + 1;

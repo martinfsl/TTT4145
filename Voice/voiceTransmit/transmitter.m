@@ -11,7 +11,8 @@ rng(630);
 % Iterate through and send all messages
 k = 1;
 j = 1;
-for i = 1:20*size(messages, 2)
+for i = 1:10*size(messages, 2)
+    tic
 
     if k == (size(messages, 2) + 1)
         k = 1;
@@ -33,22 +34,27 @@ for i = 1:20*size(messages, 2)
 
     txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
 
-    tic
-
     transmitRepeat(tx, txSignal);
     % tx(txSignal);
-
-    toc
 
     fprintf("%s %i \n", "Transmitting: ", i);
 
     % pause(0.185);
-    if i == 1
-        pause(0.4);
-    else
-        % pause(0.1);
-        pause(0.065);
-    end
+
+    % pause(0.5);
+    pause(0.3);
+
+    % if i == 1
+    %     pause(0.4);
+    % else
+    %     % pause(0.1);
+    %     % pause(0.065);
+    %     % pause(0.3);
+    %     % pause(0.06);
+    %     pause(0.5);
+    % end
+
+    toc
 end
 release(tx);
 
