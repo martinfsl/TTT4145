@@ -1,18 +1,18 @@
-function [frameSynced, rxMessage, rxHeader] = ...
-    frameSyncSingle(rxSignal, frameStart, preamble, frameSize, header)
+function [foundHeaders, foundMessages] = ...
+    frameSyncSingle(rxSignal, idx, frameSize, headerSize, M)
 
-    % if frameStart < 0
-    %     rxPreamble = zeros(length(preamble), 1);
-    % else
-    %     rxPreamble = rxSignal(frameStart:frameStart+length(preamble)-1);
-    % end
-
-    rxMessage = ...
-        rxSignal(frameStart+length(preamble)+length(header):...
-                 frameStart+length(preamble)+length(header)+frameSize-1);
-
-    rxHeader = rxSignal(frameStart+length(preamble):...
-                        frameStart+length(preamble)+length(header)-1);
-
-    frameSynced = rxSignal;
+    foundHeaders = [];
+    foundMessages = [];
+    for i = 1:length(idx)
+        if idx(i) < length(rxSignal)-frameSize-20
+            decodedHeader = pskdemod(...
+                rxSignal(idx(i)+1:idx(i)+1+headerSize-1), ...
+                M, pi/M, "gray");
+            foundHeaders = [foundHeaders, decodedHeader];
+    
+            decodedMessage = pskdemod(...
+                rxSignal(idx(i)+1+headerSize:idx(i)+1+headerSize+frameSize-1), ...
+                M, pi/M, "gray");
+            foundMessages = [foundMessages, decodedMessage];
+    end
 end

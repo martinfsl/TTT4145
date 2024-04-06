@@ -1,30 +1,45 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
 % sampleRate = 1e6;
-sampleRate = 500e3;
+% sampleRate = 2e6;
 % centerFreq = 1.8e9;
-centerFreq = 1.804e9;
+% centerFreq = 1.804e9;
+
+% sampleRate = 200e3;
+sampleRate = 1e6;
+centerFreq = 1.802e9;
 
 M = 4;
 
 %%% -----------------------------------------------------
+% preamble    = [2; 2; 1; 1; 0; 0; 2; 2; 2; 1; 1; 1; 3; 3; 3; 0; 0; 0];
+% preamble    = repmat(preamble, 40, 1);
+% preamble    = repmat(preamble, 50, 1);
+% preamble    = repmat(preamble, 5, 1);
 
 preamble1 = [1; 1; 1; 1; 1; 0; 0; 1; 1; 0; 1; 0; 1]; % Barker code
 preamble2 = [3; 3; 3; 3; 3; 2; 2; 3; 3; 2; 3; 2; 3];
-preamble3 = flip(preamble1);
-preamble4 = flip(preamble2);
+% preamble3 = flip(preamble1);
+% preamble4 = flip(preamble2);
+
+preamble3 = [0; 1; 0; 1; 0; 0; 1; 1; 0; 0; 0; 0; 0];
+preamble4 = [2; 3; 2; 3; 2; 2; 3; 3; 2; 2; 2; 2; 2];
 
 preamble = [preamble1; preamble2; preamble3; preamble4];
+% preamble = [preamble1; preamble2];
 
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
 % Setup pulse modulation filter
 rolloff = 0.75;
-sps = 6;
+sps = 8;
 span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 2900;
+% frameSize = 2900;
+frameSize = 5800;
+% frameSize = 14500;
+% frameSize = 29000;
 
 message = zeros(frameSize, 1);
 
@@ -46,9 +61,11 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 % Setup the receiver
 % numSamples = 3000;
 % numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
-numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
+% numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 % numSamples = round(4*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
 % numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
+
+numSamples = 5*2*(sps*length(bitStream)+span);
 
 run setupPluto.m
 run setupModules.m

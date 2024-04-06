@@ -1,17 +1,15 @@
 % run setupModules.m
 close all
 
-run setupModulesV2.m
-
 % profile on
 
 tic
 [rxSignal, AAvalidData, AAOverflow] = rx();
-% rxSignal = allRxSignals(:, 1);
+% rxSignal = [rxSignal; overlapBuffer];
 
-release(coarseFreqComp);
-release(symbolSync);
-release(fineFreqComp);
+% release(coarseFreqComp);
+% release(symbolSync);
+% release(fineFreqComp);
 
 % Matched Filtering
 rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
@@ -26,22 +24,34 @@ rxTimingSync = symbolSync(rxSignalCoarse);
 % FFC
 rxSignalFine = fineFreqComp(rxTimingSync);
 
-% Preamble detector
-[idx, detmet] = detector(rxSignalFine);
+% Phase Correction
+[frameStart, corrVal, isValid, corr, lags] = ...
+    estFrameStartNew(rxSignalFine, preambleMod, bitStream);
 
-frameStart = idx(1) - length(preamble) + 2;
+plot(lags, abs(corr));
 
-receivedPreamble = rxSignalFine(...
-            frameStart:(frameStart + length(preamble) - 1));
-rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, receivedPreamble);
+rxSignalPhaseCorr = phaseCorrection(rxSignalFine, preambleMod, frameStart, prevRxSignal);
 
+% Frame Synchronization
 [rxFrameSynced, rxMessage, rxHeader] = ...
-    frameSyncSingle(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
+    frameSync(rxSignalPhaseCorr, frameStart, preambleMod, frameSize, header);
 
-plot(detmet);
-
-scatterplot(rxSignalFine);
-scatterplot(rxSignalPhaseCorr);
+% prevRxSignal = rxSignal;
 
 decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
 decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
+
+error = min(symerr(decodedMessage, trueMessages));
+fprintf("%s %i\n", "The error was: ", error);
+
+% overlapBuffer = rxSignal(end-overlapSize+1:end);
+
+toc
+
+% profile viewer
+
+% scatterplot(rxSignalCoarse);
+% scatterplot(rxTimingSync);
+% scatterplot(rxSignalFine);
+% scatterplot(rxSignalPhaseCorr);
+% scatterplot(rxMessage);
