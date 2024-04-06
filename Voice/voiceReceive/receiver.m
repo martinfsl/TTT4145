@@ -5,24 +5,28 @@ allHeaders = [];
 corrVal = 0;
 isUnique = 0;
 
-buffer = [];
-bufferSize = 1;
+overlapSize = sps*(length(bitStream) + span) + 40;
+overlapBuffer = zeros(overlapSize, 1);
 
-deviceWriter = audioDeviceWriter('SampleRate', 16000);
+buffer = [];
+bufferSize = 2;
+
+deviceWriter = audioDeviceWriter('SampleRate', 16000, 'BufferSize', frameSize/4);
 % deviceWriter = audioDeviceWriter('SampleRate', 44100);
 
-audioSize = 29000/4;
-audioSize = 14500/4;
-setup(deviceWriter, zeros(audioSize, 1));
+% audioSize = 29000/4;
+setup(deviceWriter, zeros(frameSize/4, 1));
 
 phase = 0;
 
 backwardView = 1;
 
-amountReceived = 10;
+amountReceived = 100;
 while length(allHeaders) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();
+
+    rxSignal = [overlapBuffer; rxSignal];
 
     % release(coarseFreqComp);
     % release(symbolSync);
@@ -95,11 +99,16 @@ while length(allHeaders) < amountReceived
             % error = min(symerr(decodedMessage, trueMessages));
             % fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
 
-            buffer = [buffer; decodedMessage];
-            if size(buffer, 1) == bufferSize*frameSize
+            buffer = [buffer, decodedMessage];
+            disp(size(buffer, 2));
+            if size(buffer, 2) == 10*bufferSize
                 disp("Playing sound");
-                deviceWriter(reconstructVoiceSignal(buffer));
-                buffer = [];
+                
+                % deviceWriter(reconstructVoiceSignal(buffer));
+                recVoice = reconstructVoiceSignal(buffer(:));
+                sound(recVoice, 16000);
+                
+                buffer = buffer(3:end);
             end
 
             % recVoice = reconstructVoiceSignal(decodedMessage);
@@ -113,6 +122,8 @@ while length(allHeaders) < amountReceived
         end
     end
     isUnique = 0;
+
+    overlapBuffer = rxSignal(end-overlapSize+1:end);
 
     toc
 end

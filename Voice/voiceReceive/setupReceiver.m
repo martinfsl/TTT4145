@@ -34,6 +34,7 @@ rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
 % frameSize = 2900;
 frameSize = 14500;
+% frameSize = 29000;
 
 message = zeros(frameSize, 1);
 
@@ -51,9 +52,6 @@ filler = zeros(0, 1);
 % bitStream = [preamble; header; message];
 bitStream = [filler; preamble; header; message; filler];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
-
-overlapSize = sps*(length(bitStream) + span);
-overlapBuffer = zeros(overlapSize, 1);
 %%% -----------------------------------------------------
 % Setup the receiver
 % numSamples = 3000;
