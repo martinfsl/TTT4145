@@ -1,7 +1,9 @@
 %%% ---------------------------------------------------
 % Setup parameters
-frameSize = 14500;
+% frameSize = 14500;
+frameSize = size(messages, 1);
 M = 4;
+% fillerSize = 1000000;
 fillerSize = 0;
 %%% ---------------------------------------------------
 
@@ -17,10 +19,14 @@ rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 % Setup preamble
 preamble1 = [1; 1; 1; 1; 1; 0; 0; 1; 1; 0; 1; 0; 1;]; % Barker code
 preamble2 = [3; 3; 3; 3; 3; 2; 2; 3; 3; 2; 3; 2; 3;];
-preamble3 = flip(preamble1);
-preamble4 = flip(preamble2);
+% preamble3 = flip(preamble1);
+% preamble4 = flip(preamble2);
+
+preamble3 = [0; 1; 0; 1; 0; 0; 1; 1; 0; 0; 0; 0; 0];
+preamble4 = [2; 3; 2; 3; 2; 2; 3; 3; 2; 2; 2; 2; 2];
 
 preamble = [preamble1; preamble2; preamble3; preamble4];
+% preamble = [preamble1; preamble2];
 %%% ---------------------------------------------------
 
 %%% ---------------------------------------------------

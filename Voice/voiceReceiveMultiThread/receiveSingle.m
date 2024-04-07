@@ -28,8 +28,11 @@ rxSignalFine = fineFreqComp(rxTimingSync);
 
 foundPreamble = rxSignalFine(idx(2)-length(preamble)+1:idx(2));
 
-% plot(detmet);
-
 [rxSignalPhaseCorr, phase] = phaseCorrection(rxSignalFine, preambleMod, foundPreamble);
 
+[foundHeaders, foundMessages] = frameSyncSingle(...
+    rxSignalPhaseCorr, idx, frameSize, length(header), M);
+
 toc
+
+plot(detmet);

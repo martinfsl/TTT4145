@@ -1,9 +1,13 @@
 % Set up parameters and signals
 % sampleRate = 5e6;
-sampleRate = 1e6;
+% sampleRate = 1e6;
 % sampleRate = 2e6;
 % centerFreq = 1.8e9;
-centerFreq = 1.804e9;
+% centerFreq = 1.804e9;
+
+% sampleRate = 200e3;
+sampleRate = 1e6;
+centerFreq = 1.802e9;
 
 M = 4;
 
@@ -15,20 +19,29 @@ M = 4;
 
 preamble1 = [1; 1; 1; 1; 1; 0; 0; 1; 1; 0; 1; 0; 1]; % Barker code
 preamble2 = [3; 3; 3; 3; 3; 2; 2; 3; 3; 2; 3; 2; 3];
-preamble3 = flip(preamble1);
-preamble4 = flip(preamble2);
+% preamble3 = flip(preamble1);
+% preamble4 = flip(preamble2);
+
+preamble3 = [0; 1; 0; 1; 0; 0; 1; 1; 0; 0; 0; 0; 0];
+preamble4 = [2; 3; 2; 3; 2; 2; 3; 3; 2; 2; 2; 2; 2];
 
 preamble = [preamble1; preamble2; preamble3; preamble4];
+% preamble = [preamble1; preamble2];
 
 preambleMod = pskmod(preamble, M, pi/M, "gray");
 
 % Setup pulse modulation filter
 rolloff = 0.75;
-sps = 6;
+sps = 8;
 span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 
-frameSize = 2900;
+% frameSize = 2900;
+frameSize = 3000;
+% frameSize = 5800;
+% frameSize = 8000;
+% frameSize = 14500;
+% frameSize = 29000;
 
 message = zeros(frameSize, 1);
 
@@ -48,29 +61,8 @@ bitStream = [filler; preamble; header; message; filler];
 bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 % Setup the receiver
-% numSamples = 3000;
-% numSamples = round(3*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
-numSamples = round(2*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
-% numSamples = round(4*length(upfirdn(bitStreamMod, rrcFilter, sps, 1)));
-% numSamples = round(2.5*length(upfirdn(bitStreamMod, rrcFilter, sps, 1))) + 1;
+numSamples = 4*2*(sps*length(bitStream)+span);
 
 run setupPluto.m
 run setupModules.m
-%%% -----------------------------------------------------
-%%% -----------------------------------------------------
-% Setup true message if necessary
-
-% rng(1);
-% trueMessage = randi([0 M-1], frameSize, 1);
-
-Current_Dir = pwd;
-TransmitPath = '../voiceTransmit';
-
-cd(TransmitPath);
-[trueMessage, ~] = setupVoiceFromFile("VoiceFiles/stry(1).wav");
-cd(Current_Dir);
-
-trueMessage = trueMessage(1:29000);
-trueMessages = reshape(trueMessage, [frameSize, length(trueMessage)/frameSize]);
-
 %%% -----------------------------------------------------

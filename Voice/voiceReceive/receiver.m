@@ -101,14 +101,14 @@ while length(allHeaders) < amountReceived
 
             buffer = [buffer, decodedMessage];
             disp(size(buffer, 2));
-            if size(buffer, 2) == 10*bufferSize
+            if size(buffer, 2) == bufferSize
                 disp("Playing sound");
                 
                 % deviceWriter(reconstructVoiceSignal(buffer));
-                recVoice = reconstructVoiceSignal(buffer(:));
+                recVoice = reconstructVoiceSignal([buffer(:, 1); buffer(:, 2)]);
                 sound(recVoice, 16000);
                 
-                buffer = buffer(3:end);
+                buffer = buffer(:, 3:end);
             end
 
             % recVoice = reconstructVoiceSignal(decodedMessage);

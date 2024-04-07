@@ -13,4 +13,5 @@ tx = sdrtx('Pluto', 'RadioID', 'usb:0', 'CenterFrequency', centerFreq, ...
 % Use the info method to show the actual values of various hardware-related properties
 txRadioInfo = info(tx)
 
+run readVoiceMessage.m
 run setupParameters.m

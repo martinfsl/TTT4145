@@ -1,13 +1,4 @@
-function [phaseCorr, phaseDiff] = phaseCorrection(rxSignal, preamble, frameStartIndex, prevRxSignal)
-
-    if frameStartIndex <= 0
-        receivedPreamble = prevRxSignal(end+frameStartIndex+1:end);
-        receivedPreamble = [receivedPreamble; ...
-                            rxSignal(1:length(preamble)+frameStartIndex)];
-    else
-        receivedPreamble = rxSignal(...
-            frameStartIndex:(frameStartIndex + length(preamble) - 1));
-    end
+function [phaseCorr, phaseDiff] = phaseCorrection(rxSignal, preamble, receivedPreamble)
 
     % disp(size(receivedPreamble));
     phaseDiff = angle(mean(conj(preamble) .* receivedPreamble));

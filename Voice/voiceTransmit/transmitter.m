@@ -11,7 +11,7 @@ rng(630);
 % Iterate through and send all messages
 k = 1;
 j = 1;
-for i = 1:10*size(messages, 2)
+for i = 1:100*size(messages, 2)
     tic
 
     if k == (size(messages, 2) + 1)
@@ -43,6 +43,7 @@ for i = 1:10*size(messages, 2)
 
     % pause(0.5);
     pause(0.3);
+    % pause(0.4);
 
     % if i == 1
     %     pause(0.4);
