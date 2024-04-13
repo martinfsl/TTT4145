@@ -1,4 +1,4 @@
-function [foundHeaders, foundMessages] = ...
+function [foundHeaders, foundMessages, rxMessage] = ...
     frameSyncSingle(rxSignal, idx, frameSize, headerSize, M)
 
     foundHeaders = [];
@@ -17,6 +17,7 @@ function [foundHeaders, foundMessages] = ...
                 M, pi/M, "gray");
             foundMessages = [foundMessages, decodedMessage];
 
+            rxMessage = rxSignal(idx(i)+1+headerSize:idx(i)+1+headerSize+frameSize-1);
             % scatterplot(rxSignal(idx(i)+1+headerSize:idx(i)+1+headerSize+frameSize-1));
         end
     end

@@ -36,7 +36,7 @@ if length(idx) > 1
     [rxSignalPhaseCorr, phase] = phaseCorrection(rxSignalFine, preambleMod, ...
         foundPreamble);
     
-    [foundHeaders, foundMessages] = frameSyncSingle(...
+    [foundHeaders, foundMessages, rxMessage] = frameSyncSingle(...
         rxSignalPhaseCorr, idx, frameSize, length(header), M);
     
     for f = 1:size(foundHeaders, 2)
@@ -50,8 +50,8 @@ toc
 
 % profile viewer
 
-% scatterplot(rxSignalCoarse);
-% scatterplot(rxTimingSync);
-% scatterplot(rxSignalFine);
-% scatterplot(rxSignalPhaseCorr);
-% scatterplot(rxMessage);
+scatterplot(rxSignalCoarse);
+scatterplot(rxTimingSync);
+scatterplot(rxSignalFine);
+scatterplot(rxSignalPhaseCorr);
+scatterplot(rxMessage);

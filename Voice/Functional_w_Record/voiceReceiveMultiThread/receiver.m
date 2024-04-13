@@ -22,7 +22,8 @@ global deviceWriter
 % deviceWriter = audioDeviceWriter('SampleRate', 44100, 'BufferSize', bufferSize*frameSize/4);
 % deviceWriter = audioDeviceWriter('SampleRate', 16000, 'BufferSize', bufferSize*frameSize/4);
 % deviceWriter = audioDeviceWriter('SampleRate', 24000, 'BufferSize', bufferSize*frameSize/4);
-deviceWriter = audioDeviceWriter('SampleRate', 11025, 'BufferSize', bufferSize*frameSize/4);
+% deviceWriter = audioDeviceWriter('SampleRate', 11025, 'BufferSize', bufferSize*frameSize/4);
+deviceWriter = audioDeviceWriter('SampleRate', 16000, 'BufferSize', bufferSize*frameSize/4);
 
 playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.003;
 playbackTimer = timer('ExecutionMode', 'fixedSpacing', ...
@@ -37,16 +38,19 @@ phase = 0;
 
 backwardView = 10;
 
-amountReceived = 200;
+% amountReceived = 200;
+% amountReceived = 300;
+% amountReceived = 100;
+amountReceived = 80;
 while length(allHeaders) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();
 
     rxSignal = [overlapBuffer; rxSignal];
 
-    % release(coarseFreqComp);
-    % release(symbolSync);
-    % release(fineFreqComp);
+    release(coarseFreqComp);
+    release(symbolSync);
+    release(fineFreqComp);
     
     % Matched Filtering
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
