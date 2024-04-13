@@ -37,7 +37,7 @@ phase = 0;
 
 backwardView = 10;
 
-amountReceived = 200;
+amountReceived = 58;
 while length(allHeaders) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();

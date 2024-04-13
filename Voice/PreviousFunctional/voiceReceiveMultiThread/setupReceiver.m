@@ -8,8 +8,7 @@
 % sampleRate = 200e3;
 % sampleRate = 1e6;
 sampleRate = 750e3;
-% centerFreq = 1.802e9;
-centerFreq = 1.799e9;
+centerFreq = 1.802e9;
 
 M = 4;
 

@@ -40,8 +40,47 @@ while amount < amountOfFrames
 end
 release(audioInput);
 
-audioDataToPlay = symbolsToAudioData(voiceMessages(:), length(allAudioData(:)));
+% Construct a signal to send
+messages = voiceMessages;
 
+bitStream = [];
+k = 1; j = 1;
+headersSent = [];
+for i = 1:size(messages, 2)
+    if k == (size(messages, 2) + 1)
+        k = 1;
+    end
+    if j == 33
+        j = 1;
+    end
+
+    message = messages(:, k);
+    header = headers(:, j);
+
+    headersSent = [headersSent, j-1];
+
+    k = k + 1; j = j + 1;
+
+    bitStream = [bitStream; preamble; header; message];
+end
+
+bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
+
+txSignal = upfirdn(bitStreamMod, rrcFilter, sps, 1);
+
+tic
+disp("Transmitting the signal");
+
+transmitRepeat(tx, txSignal);
+
+% pause(10);
+
+% release(tx);
+
+% audioDataToPlay = symbolsToAudioData(voiceMessages(:), length(allAudioData(:)));
+
+
+% Functions to convert to symbols and back
 function symbols = audioDataToSymbols(audioData)
     % Parameters
     nBits = 8; % Number of bits for quantization

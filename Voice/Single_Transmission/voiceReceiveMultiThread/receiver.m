@@ -1,5 +1,7 @@
 allHeaders = []; 
 
+allHeaders_sorted = [];
+
 allMessages = [];
 
 allDetmet = [];
@@ -14,6 +16,8 @@ global buffer
 buffer = [];
 global bufferSize
 bufferSize = 5;
+global bufferLowerLimit
+bufferLowerLimit = 10;
 
 % deviceWriter = audioDeviceWriter('SampleRate', 16000, 'BufferSize', 2*frameSize/4);
 % deviceWriter = audioDeviceWriter('SampleRate', 44100, 'BufferSize', frameSize/4);
@@ -24,7 +28,7 @@ global deviceWriter
 % deviceWriter = audioDeviceWriter('SampleRate', 24000, 'BufferSize', bufferSize*frameSize/4);
 deviceWriter = audioDeviceWriter('SampleRate', 11025, 'BufferSize', bufferSize*frameSize/4);
 
-playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.003;
+playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.007;
 playbackTimer = timer('ExecutionMode', 'fixedSpacing', ...
                       'Period', playbackPeriod, ...
                       'TimerFcn', @(~,~)playNextAudioChunk());
@@ -37,16 +41,16 @@ phase = 0;
 
 backwardView = 10;
 
-amountReceived = 200;
+amountReceived = 300;
 while length(allHeaders) < amountReceived
     tic
     [rxSignal, AAvalidData, AAOverflow] = rx();
 
     rxSignal = [overlapBuffer; rxSignal];
 
-    % release(coarseFreqComp);
-    % release(symbolSync);
-    % release(fineFreqComp);
+    release(coarseFreqComp);
+    release(symbolSync);
+    release(fineFreqComp);
     
     % Matched Filtering
     rxFiltered = upfirdn(rxSignal, rrcFilter, 1, 1);
@@ -63,14 +67,6 @@ while length(allHeaders) < amountReceived
     
     [idx, ~] = detector(rxSignalFine);
 
-    % [idx, detmet] = detector(rxSignalFine);
-
-    % plot(detmet);
-    % drawnow;
-
-    % s = struct; s.detmet = detmet;
-    % allDetmet = [allDetmet, s];
-    
     % This is to avoid getting indices during start up where
     % the correlation is 'mushed'   
     if ~isempty(idx)
@@ -89,9 +85,12 @@ while length(allHeaders) < amountReceived
         [foundHeaders, foundMessages] = frameSyncSingle(...
             rxSignalPhaseCorr, idx, frameSize, length(header), M);
 
+        % % Sorting
         % [foundHeaders, sortIdx] = sort(foundHeaders, 'ascend');
-        % 
         % foundMessages = foundMessages(sortIdx);
+
+        found_h = [];
+        found_messages = [];
 
         for f = 1:size(foundHeaders, 2)
             decodedHeader = foundHeaders(:, f);
@@ -116,51 +115,38 @@ while length(allHeaders) < amountReceived
             if isUnique
                 fprintf("%s %i \n", "New message found - header: ", h+1);
     
-                % error = min(symerr(decodedMessage, trueMessages));
-                % fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
-    
-                buffer = [buffer, decodedMessage];
-                disp(size(buffer, 2));
+                % buffer = [buffer, decodedMessage];
+                % disp(size(buffer, 2));
 
-                % deviceWriter(reconstructVoiceSignal(decodedMessage));
-
-                % sound(reconstructVoiceSignal(decodedMessage), 44100);
-    
                 allHeaders = [allHeaders; h];
 
-                % allMessages = [allMessages, decodedMessage];
+                found_h = [found_h; h];
+                found_messages = [found_messages, decodedMessage];
             end
 
             isUnique = 0;
+            
+        end
+
+        if ~isempty(found_h)
+            [sorted_h, sortIdx] = sort(found_h, 'ascend');
+            allHeaders_sorted = [allHeaders_sorted; sorted_h];
+            sorted_messages = found_messages(:, sortIdx);
+
+            buffer = [buffer, sorted_messages];
+            disp(size(buffer, 2));
         end
     end
 
     overlapBuffer = rxSignal(end-overlapSize+1:end);
 
-    % if size(buffer, 2) > bufferSize
-    %     disp("Playing sound");
-    % 
-    %     deviceWriter(reconstructVoiceSignal([buffer(:, 1); buffer(:, 2)]));
-    % 
-    %     % recVoice = reconstructVoiceSignal([buffer(:, 1); buffer(:, 2)]);
-    %     % sound(recVoice, 16000);
-    % 
-    %     buffer = buffer(:, 2:end);
-    % end
-
     toc
 end
-
-% audioToPlay = allMessages(:, 1:130);
-% sound(reconstructVoiceSignal(audioToPlay(:)), 44100);
-
-% audioToPlay = allMessages(:, 1:10);
-% deviceWriter(reconstructVoiceSignal(audioToPlay(:)));
 
 listOfTimers = timerfindall
 
 while ~isempty(listOfTimers)
-    if size(buffer, 2) < bufferSize
+    if size(buffer, 2) < bufferLowerLimit
         % Stopping the timer
         listOfTimers = timerfindall;
         if ~isempty(listOfTimers)

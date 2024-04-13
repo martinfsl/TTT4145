@@ -64,6 +64,7 @@ bitStreamMod = pskmod(bitStream, M, pi/M, "gray");
 %%% -----------------------------------------------------
 % Setup the receiver
 numSamples = 4*2*(sps*length(bitStream)+span);
+% numSamples = 20*2*(sps*length(bitStream)+span);
 
 run setupPluto.m
 run setupModules.m

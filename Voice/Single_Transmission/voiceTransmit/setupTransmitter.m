@@ -3,8 +3,7 @@
 % sampleRate = 1e6;
 sampleRate = 750e3;
 % sampleRate = 500e3;
-% centerFreq = 1.802e9;
-centerFreq = 1.799e9;
+centerFreq = 1.802e9;
 % centerFreq = 1.798e9;
 
 % Setup the transmitter
