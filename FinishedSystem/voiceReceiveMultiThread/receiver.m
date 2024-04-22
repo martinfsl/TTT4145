@@ -15,14 +15,15 @@ global buffer
 buffer = [];
 global bufferSize
 % bufferSize = 10;
-bufferSize = 3;
+% bufferSize = 3;
+bufferSize = 30;
 
 h_bulk = 0; % Initialization
 invalidBulkHeaders = [];
-% bulkSize = 50;
+bulkSize = 50;
 % bulkSize = 20;
 % bulkSize = 18;
-bulkSize = 15;
+% bulkSize = 15;
 
 global deviceWriter
 deviceWriter = audioDeviceWriter('SampleRate', 11200, 'BufferSize', bufferSize*frameSize/4);
