@@ -8,27 +8,21 @@ allDetmet = [];
 corrVal = 0;
 isUnique = 0;
 
-overlapSize = sps*(length(bitStream)) + span + 40;
+% overlapSize = sps*(length(bitStream)) + span + 40;
+overlapSize = sps*(length(bitStream)) + span + 100;
 overlapBuffer = zeros(overlapSize, 1);
 
 global buffer
 buffer = [];
 global bufferSize
-% bufferSize = 10;
-% bufferSize = 3;
-bufferSize = 30;
-
-h_bulk = 0; % Initialization
-invalidBulkHeaders = [];
-bulkSize = 50;
-% bulkSize = 20;
-% bulkSize = 18;
-% bulkSize = 15;
+% bufferSize = 5; % Works well!!
+bufferSize = 8;
 
 global deviceWriter
 deviceWriter = audioDeviceWriter('SampleRate', 11200, 'BufferSize', bufferSize*frameSize/4);
 
-playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.003;
+% playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.003;
+playbackPeriod = 0.001;
 playbackTimer = timer('ExecutionMode', 'fixedSpacing', ...
                       'Period', playbackPeriod, ...
                       'TimerFcn', @(~,~)playNextAudioChunk());
@@ -37,8 +31,10 @@ start(playbackTimer);
 phase = 0;
 
 % Backward View
-bwView = 10;
-bulk_bwView  = 5;
+bwView = 2;
+% bulk_bwView  = 5;
+
+% prev_bulk = -1;
 
 while true
 
@@ -98,10 +94,8 @@ while true
                  4*mode(decodedHeader(10:12)) + ...
                  1*mode(decodedHeader(13:15));
             
-            % if isUnique
             if checkIfUnique(...
-                    allHeaders, h, bwView, possibleHeaders, ...
-                    invalidBulkHeaders, h_bulk, bulk_bwView)
+                    allHeaders, h, bwView, possibleHeaders)
 
                 fprintf("%s %s %i %s %i \n", ...
                     "New message found", ...
@@ -116,6 +110,7 @@ while true
 
                 allHeaders = [allHeaders; h];
                 allHeadersAcrossBulks = [allHeadersAcrossBulks; [h, h_bulk]];
+                % prev_bulk = h_bulk;
             end
 
             isUnique = 0;

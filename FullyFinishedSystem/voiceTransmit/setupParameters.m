@@ -2,20 +2,24 @@
 % Setup parameters
 % frameSize = 3000;
 frameSize = 2000;
+% frameSize = 1000;
 M = 4;
 
 global amountOfFrames
 % amountOfFrames = 20;
-amountOfFrames = 50;
-% amountOfFrames = 18;
-% amountOfFrames = 15;
+% amountOfFrames = 50;
+amountOfFrames = 8;
 
 %%% ---------------------------------------------------
 
 %%% ---------------------------------------------------
 % Setup pulse modulation filter
-rolloff = 0.5;
-sps = 8;
+% rolloff = 0.5;
+% sps = 6;
+
+sps = 4;
+rolloff = 0.7;
+
 span = 40;
 rrcFilter = rcosdesign(rolloff, span, sps, "sqrt");
 %%% ---------------------------------------------------
