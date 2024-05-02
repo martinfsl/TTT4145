@@ -1,24 +1,19 @@
-allHeaders = []; 
-allHeadersAcrossBulks = [];
-
-allMessages = [];
-
-allDetmet = [];
+allHeadersAcrossBulks = []; % Initialization
 
 corrVal = 0;
-isUnique = 0;
 
-% overlapSize = sps*(length(bitStream)) + span + 40;
 overlapSize = sps*(length(bitStream)) + span + 100;
 overlapBuffer = zeros(overlapSize, 1);
 
 global buffer
 buffer = [];
 global bufferSize
-bufferSize = 8;
+% bufferSize = 8;
+% bufferSize = 2;
+bufferSize = 1;
 
 global deviceWriter
-deviceWriter = audioDeviceWriter('SampleRate', 11200, 'BufferSize', bufferSize*frameSize/4);
+deviceWriter = audioDeviceWriter('SampleRate', 8000, 'BufferSize', bufferSize*frameSize/4);
 
 % playbackPeriod = deviceWriter.BufferSize/deviceWriter.SampleRate - 0.003;
 playbackPeriod = 0.001;
@@ -31,13 +26,10 @@ phase = 0;
 
 % Backward View
 bwView = 2;
-% bulk_bwView  = 5;
-
-% prev_bulk = -1;
 
 while true
-
     tic
+
     [rxSignal, AAvalidData, AAOverflow] = rx();
 
     rxSignal = [overlapBuffer; rxSignal];
@@ -55,11 +47,8 @@ while true
     % Timing Synchronization
     rxTimingSync = symbolSync(rxSignalCoarse);
     
-    % FFC
-    rxSignalFine = fineFreqComp(rxTimingSync);
-    
     % Preamble detector
-    [idx, ~] = detector(rxSignalFine);
+    [idx, ~] = detector(rxTimingSync);
 
     % This is to avoid getting indices during start up where
     % the correlation is 'mushed'   
@@ -69,50 +58,50 @@ while true
 
     if length(idx) > 1
 
-        % Correcting the phase using the previous estimate
-        rxSignalFine = rxSignalFine .* exp(-1i * phase);
+        % Finding all packets based on the preamble detector
+        rxPackets = extractHeadersMessages(idx, rxTimingSync, ...
+                    frameSize, length(bulk_header)+length(header), length(preamble));
 
-        foundPreamble = rxSignalFine(idx(2)-length(preamble)+1:idx(2));
+        for f = 1:size(rxPackets, 2)
+            % FFC
+            rxSignalFine = fineFreqComp(rxPackets(:, f));
 
-        % Correcting the phase using a new estimate
-        [rxSignalPhaseCorr, phase] = phaseCorrection(rxSignalFine, preambleMod, ...
-            foundPreamble);
+            % Extracting the preamble from this packet
+            foundPreamble = rxSignalFine(1:length(preamble));
 
-        % Extracting the headers and messages found
-        [foundHeaders, foundMessages] = frameSyncSingle(...
-            rxSignalPhaseCorr, idx, frameSize, length(bulk_header)+length(header), M);
+            % Phase correction
+            [rxSignalPhaseCorr, ~] = phaseCorrection(rxSignalFine, preambleMod, ...
+                foundPreamble);
 
-        for f = 1:size(foundHeaders, 2)
-            decodedHeader = foundHeaders(:, f);
-            decodedMessage = foundMessages(:, f);
-            
+            rxHeader = rxSignalPhaseCorr(1+length(preamble):...
+                            length(preamble)+headerSize);
+            rxMessage = rxSignalPhaseCorr(1+length(preamble)+headerSize:...
+                            length(preamble)+headerSize+frameSize);
+
+            decodedHeader = pskdemod(rxHeader, M, pi/M, "gray");
+            decodedMessage = pskdemod(rxMessage, M, pi/M, "gray");
+
             h_bulk = 4*mode(decodedHeader(1:3)) + ...
                        mode(decodedHeader(4:6));
 
             h = 4*mode(decodedHeader(7:9)) + ...
                 1*mode(decodedHeader(10:12));
-            
+
+            % Check if header has been read before
+            % (Old implementation, might be removed)
             if checkIfUnique(...
-                    allHeaders, h, bwView, possibleHeaders)
+                    allHeadersAcrossBulks, h, bwView, possibleHeaders)
 
                 fprintf("%s %s %i %s %i \n", ...
                     "New message found", ...
                     "header: ", h, ...
                     "bulk: ", h_bulk);
-    
-                % error = min(symerr(decodedMessage, trueMessages));
-                % fprintf("%s %i %s %i \n", "The error was: ", error, " in header ", h+1);
-    
+
                 buffer = [buffer, decodedMessage];
                 disp(size(buffer, 2));
 
-                allHeaders = [allHeaders; h];
                 allHeadersAcrossBulks = [allHeadersAcrossBulks; [h, h_bulk]];
-                % prev_bulk = h_bulk;
             end
-
-            isUnique = 0;
-
         end
     end
 
